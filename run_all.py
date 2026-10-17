@@ -92,6 +92,8 @@ def main() -> int:
             failures.append(script)
 
     for script, label in [("verify/check_id_linkage.py", "identifier key"),
+                          ("verify/check_online_vs_paper.py",
+                           "online tables ↔ paper.py parse"),
                           ("verify/check_figure_values.py",
                            "figure ↔ table numeric agreement"),
                           ("verify/scan_identifiers.py --gate",

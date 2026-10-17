@@ -21,13 +21,14 @@ python -X utf8 verify/check_paper_numbers.py
 | `python -X utf8 verify/check_paper_numbers.py` | every published number, cell by cell | PASS 733 / DISCREPANCY 2 / SKIP 77 / **FAIL 0** | **exit 3** (fail-closed) |
 | `python -X utf8 verify/check_id_linkage.py` | the cross-table identifier key (structural, coverage, fingerprint, positional control) | PASS 17 / WARN 4 / INFO 4 | **exit 3** |
 | `python -X utf8 verify/check_disputed_items.py` | the six items that were disputed during review | PASS 113 / INFO 6 | **exit 3** |
+| `python -X utf8 verify/check_online_vs_paper.py` | ★ **online tables ↔ parser** — every one of the 22 externalised CSVs must parse into its declared structure, every `paper.py` accessor must reproduce an independent positional read, all numeric cells must parse, and quantities stated in two tables must agree | PASS 54 / FAIL 0 (1,011 numeric cells) | **exit 3** (the submission package is read from `C:\O`, never copied in) |
 | `python -X utf8 verify/check_figure_values.py` | ★ **figure ↔ table** — every number printed in `results/figures` is re-derived from its authoritative table (text extracted from the vector PDFs, no pixel comparison) | PASS 50 / FAIL 0 | **exit 3** |
 | `python -X utf8 verify/scan_identifiers.py --gate` | ★ **identifier gate** — no admission number may ship | PASS | **PASS** (it scans the repository itself) |
 | `python -X utf8 verify/check_paper_numbers.py --synthetic` | ★ **pipeline demonstration** on the fabricated dataset | — | **exit 0** if the code path runs |
 
 > **The individual-level data is not in this repository** (ChiCTR2500111002:
 > *IPD sharing: No*), so a fresh clone cannot reproduce the published numbers and
-> the four numeric verifiers exit **3** with an explicit message instead of
+> the numeric verifiers exit **3** with an explicit message instead of
 > passing.  See §4.
 
 `DISCREPANCY` = a published value that does not follow from the released data;

@@ -380,7 +380,13 @@ def main() -> int:
     check_6_table1()
 
     df = pd.DataFrame(rows)
-    out = ROOT / "results" / "tables" / "disputed_items_verification.csv"
+    # follow --config like the other entry points: write to the configured
+    # results_dir (results/tables by default) rather than always into the repo
+    try:
+        out = (_repo_path(_load_config(_cfgarg), "results_dir") / "tables"
+               / "disputed_items_verification.csv")
+    except Exception:
+        out = ROOT / "results" / "tables" / "disputed_items_verification.csv"
     out.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(out, index=False, encoding="utf-8-sig")
     print("\n" + "=" * 108)
