@@ -1,0 +1,40 @@
+# habitat-radiomics-pca-lnm — Python dependencies
+#
+# Two environments are recorded:
+#
+#   1. PUBLISHED  — the versions reported in Table S8 of the manuscript.
+#   2. VERIFIED   — the environment in which `verify/check_paper_numbers.py`
+#                   was run to produce the numbers in
+#                   docs/VERIFICATION_REPORT.md.  Everything in src/05-src/10
+#                   and verify/ reproduces the published results on both.
+#
+# Install with:  python -m pip install -r requirements.txt
+
+# ---- core statistics and tables (published) --------------------------------
+numpy==1.21.6
+pandas==1.4.4
+scipy==1.8.1
+scikit-learn==1.0.2
+statsmodels==0.13.2
+
+# ---- core statistics and tables (verified) ---------------------------------
+# numpy==1.26.4
+# pandas==2.2.2
+# scipy==1.13.1
+# scikit-learn==1.4.2
+# statsmodels==0.14.2
+
+# ---- required only by the imaging-dependent steps --------------------------
+#  src/01_segmentation.py, src/03_feature_extraction.py
+SimpleITK==2.1.1
+pyradiomics==3.0.1
+
+# ---- figures ---------------------------------------------------------------
+matplotlib==3.5.3
+
+# ---- configuration ---------------------------------------------------------
+PyYAML==6.0
+
+# ---- deep-learning comparator (optional; needs a GPU and the imaging data) --
+# torch==1.12.1
+# nnunetv2==2.2

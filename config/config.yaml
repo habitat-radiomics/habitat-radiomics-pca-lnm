@@ -1,0 +1,117 @@
+# ---------------------------------------------------------------------------
+# habitat-radiomics-pca-lnm — configuration
+# ---------------------------------------------------------------------------
+# All paths are relative to the repository root unless marked ABSOLUTE.
+# The SOURCES block documents where every input was taken from in the
+# authors' working archive.  Nothing under a path containing 副本 /
+# _deprecated / _deleted / 回退镜像 / xxx\ is ever read (see
+# docs/OLD_CODE_INVENTORY.md).
+# ---------------------------------------------------------------------------
+
+# Where the assembled, publishable input tables live (created by
+# src/00_assemble_data.py).
+data_dir: data
+
+# Where every script writes its outputs.
+results_dir: results
+
+# ---------------------------------------------------------------------------
+# ARCHIVE ROOTS  (ABSOLUTE — override on the command line if you work
+# elsewhere; only 00_assemble_data.py touches these)
+# ---------------------------------------------------------------------------
+archives:
+  # deployment root: figures_submission/, SHAP_output/, scripts/
+  deploy_root: "C:/Users/l/Desktop/lunwen3"
+  # code repository shipped with the submission (derived_data/)
+  legacy_code_repo: "C:/Users/l/Desktop/lunwen3/code_repository"
+  # deployment habitat-feature tables (K = 5)
+  sol21_k5: "C:/Users/l/Desktop/lunwen3/sol21. 生境分析-(多)单中心-不同区域对比-临床"
+  # K = 4 and K = 7 replication runs
+  sol21_k4: "C:/O/K4/sol21. 生境分析-(多)单中心-不同区域对比-临床"
+  sol21_k7: "C:/O/K7/sol21. 生境分析-(多)单中心-不同区域对比-临床"
+  # clinical Table 1 / Table S15 sources (AUTHORITATIVE — never the DL clinical.csv)
+  # ★ Table S15 (n = 377, PI-RADS OR 1.611) is reproduced ONLY by C:/O/Clinic.csv.
+  #   The workspace copy lunwen3/Clinic.csv is a LATER 1097-row build whose
+  #   training cohort has 374 complete cases and gives PI-RADS 1.565 — using it
+  #   produces three spurious "discrepancies" in Table S15.
+  clinic_csv: "C:/O/Clinic.csv"
+  # fallback / cross-check only (1097 rows, 2026-09-03)
+  clinic_csv_workspace: "C:/Users/l/Desktop/lunwen3/Clinic.csv"
+  label_csv: "C:/Users/l/Desktop/lunwen3/label.csv"
+  # K selection (Table S3): 100-fold results and summary
+  k_cv10x10_summary: "C:/Users/l/Desktop/lunwen3/results/K_CV10x10_summary.csv"
+  # ★ the ONLY table that links the score files to patient identifiers
+  cases_with_ids: "C:/Users/l/Desktop/lunwen3/scripts/_cases_with_ids.csv"
+  # deployed scores carrying identifiers and 16-digit precision
+  fullprec_scores: "C:/Users/l/Desktop/lunwen3/scripts/_fullprec_scores.csv"
+  # scanner census / DICOM acquisition parameters
+  scanner_json_dir: "C:/Users/l/Desktop/lunwen3/scripts"
+
+# ---------------------------------------------------------------------------
+# Cohort definition (frozen; do not change)
+# ---------------------------------------------------------------------------
+cohorts:
+  train:            {label: "Training",     n: 398, pn1: 118, centre: "First Affiliated Hospital of Anhui Medical University"}
+  test1:            {label: "Test 1",       n: 339, pn1: 45,  centre: "Nanjing Drum Tower Hospital"}
+  test2:            {label: "Test 2",       n: 189, pn1: 18,  centre: "Renji Hospital, Shanghai Jiao Tong University School of Medicine"}
+  test_prospective: {label: "Prospective",  n: 90,  pn1: 19,  centre: "First Affiliated Hospital of Anhui Medical University"}
+external_cohorts: [test1, test2, test_prospective]   # pooled external n = 618
+
+# ---------------------------------------------------------------------------
+# Signatures and the classifier that was deployed for each (Table S8)
+# ---------------------------------------------------------------------------
+signatures:
+  Clinic:            {classifier: LR,  column: Clinic}
+  Habitat:           {classifier: LR,  column: Habitat}     # 27-feature all-habitat model
+  HabitatH1:         {classifier: MLP, column: HabitatH1}
+  HabitatH2:         {classifier: LR,  column: HabitatH2}
+  HabitatH3:         {classifier: MLP, column: HabitatH3}
+  HabitatH4:         {classifier: LR,  column: HabitatH4}
+  HabitatH5:         {classifier: MLP, column: HabitatH5}
+  Combined:          {classifier: LR,  column: Combined}
+
+# ---------------------------------------------------------------------------
+# Model parameters (frozen before prospective enrolment)
+# ---------------------------------------------------------------------------
+model:
+  # final combined model: logit(p) = b0 + b1*Clinic + b2*H2 + b3*H4
+  combined:
+    features: [Clinic, HabitatH2, HabitatH4]
+    coef:     [4.062608661920751, 2.593122775462074, 3.9343891733424328]
+    intercept: -4.248788185663511
+  # equivalent nomogram parameterisation: ISUP + PI-RADS entered separately
+  nomogram:
+    features: [ISUP, PI_RADS, HabitatH2, HabitatH4]
+    coef:     [0.5267010756098422, 0.11852849859206408, 2.5738135928155037, 3.9821238228905025]
+    intercept: -5.581786526039378
+    training_auc: 0.795218
+    note: >
+      Equivalent parameterisation entering ISUP and PI-RADS separately instead of
+      the pre-computed clinical probability.  Refitted on the 391 training
+      patients with complete ISUP/PI-RADS (7 of 398 lacked ISUP); training AUC
+      0.795 reproduces the value reported in the Fig. 5 / Fig. S8 legend
+      (0.795 versus 0.798 for the probability-parameterised model).
+
+statistics:
+  auc_ci_bootstrap: 2000
+  delong_bootstrap: 3000
+  nri_idi_bootstrap: 2000
+  dca_thresholds: [0.05, 0.10, 0.15, 0.20, 0.25, 0.30]
+  dca_grid: [0.05, 0.90]
+  hosmer_lemeshow_bins: 10
+  random_state: 20261016
+
+# ---------------------------------------------------------------------------
+# K selection
+# ---------------------------------------------------------------------------
+k_selection:
+  candidates: [2, 3, 4, 5, 6, 7, 8, 9]
+  repeats: 10
+  folds: 10
+  selected: 5
+  rule: "highest mean best-algorithm AUC across 100 folds; ties broken towards the higher mean"
+
+habitat_partitions:
+  4: {retained: [HabitatH1, HabitatH4], run_id: K4}
+  5: {retained: [HabitatH2, HabitatH4], run_id: K5}
+  7: {retained: [HabitatH6, HabitatH7], run_id: K7}

@@ -1,0 +1,94 @@
+# ---------------------------------------------------------------------------
+# habitat-radiomics-pca-lnm
+#
+# What IS committed:
+#   src/ verify/ tools/ docs/ config/
+#   data/synthetic/       fabricated data, pipeline demonstration only
+#   data/*.csv            AGGREGATE results only (no patient rows)
+#   data/MANIFEST.json    metadata
+#   results/README.md     the directory is otherwise generated
+#
+# ★ What is NOT committed, and must never be:
+#   any individual-level (IPD) table — the trial registration states
+#   "IPD sharing: No".  The per-patient clinical, feature, score, identifier-key
+#   and SHAP tables live in a controlled institutional store outside git.
+#   Run outputs derived from them (results/tables, results/figures) likewise.
+#
+#   raw imaging, model weights, scratch files, caches
+# ---------------------------------------------------------------------------
+
+# ---- individual-level (IPD) tables: never commit -------------------------
+# the real tables are placed in data/ only in the controlled environment; the
+# synthetic set lives under data/synthetic/ and is whitelisted at the bottom
+data/clinical.csv
+data/clinical_workspace.csv
+data/labels.csv
+data/analysis_set.csv
+data/model_inputs.csv
+data/scores_highprec.csv
+data/fullprec_scores.csv
+data/cases_with_ids.csv
+data/candidate_features.csv
+data/scores/
+data/features/
+data/shap/
+data/k_runs/
+
+# ---- run outputs derived from individual-level data ----------------------
+results/tables/
+results/figures/
+results/logs/
+results/*.json
+
+# ---- raw imaging and binary intermediates --------------------------------
+*.nii
+*.nii.gz
+*.dcm
+*.dicom
+*.ima
+*.nrrd
+*.mha
+*.mhd
+*.npy
+*.npz
+*.pkl
+*.h5
+*.pt
+*.pth
+
+# ---- python ---------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+venv/
+.venv/
+env/
+build/
+dist/
+
+# ---- editors / OS ---------------------------------------------------------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- local backups (may hold un-pseudonymised snapshots) ------------------
+backups/
+
+# ---- scratch --------------------------------------------------------------
+_probe_*.py
+_dbg.py
+_diag*.py
+_v[0-9]*.py
+_tmp/
+*.log
+.commitmsg.txt
+
+# ---- synthetic data IS committed (pipeline demonstration) ---------------
+!data/synthetic/
+!data/synthetic/**

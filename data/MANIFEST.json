@@ -1,0 +1,149 @@
+{
+  "generated_by": "rebuilt after the IPD withdrawal (2026-10-17)",
+  "n_files": 18,
+  "total_bytes": 3364753,
+  "identifier_map_location": "OUTSIDE the repository (never committed)",
+  "note": "This manifest describes the PUBLIC repository only.  The individual-level analysis dataset (ChiCTR2500111002: IPD sharing = No) and the run outputs derived from it are held in a controlled institutional store.",
+  "withdrawn_individual_level": [
+    "clinical.csv",
+    "clinical_workspace.csv",
+    "labels.csv",
+    "analysis_set.csv",
+    "model_inputs.csv",
+    "scores_highprec.csv",
+    "fullprec_scores.csv",
+    "cases_with_ids.csv",
+    "scores/",
+    "features/",
+    "shap/",
+    "k_runs/"
+  ],
+  "entries": [
+    {
+      "dst": "dl_comparator_results.csv",
+      "note": "deep-learning comparator, pooled results (Table 2 DL rows, Table S19)",
+      "level": "aggregate",
+      "bytes": 735,
+      "sha256": "32b73134075faefbfa535bce8cba18e1096a89043d1dcb78f3974d58c5d200fb"
+    },
+    {
+      "dst": "dl_bootstrap_ci.csv",
+      "note": "deep-learning comparator bootstrap CIs",
+      "level": "aggregate",
+      "bytes": 3259,
+      "sha256": "8032f8a8887954b06d77b2aa4a2d89996c9ec9dad323864ab3a3e9f6644689bb"
+    },
+    {
+      "dst": "K_CV10x10_summary.csv",
+      "note": "100-fold repeated-CV summary by K (Table S3 / Fig. S2)",
+      "level": "aggregate",
+      "bytes": 1063,
+      "sha256": "10032bdd95076f6665674d6a59dd64b3312ddb706bc132046a0da4591dffa3d4"
+    },
+    {
+      "dst": "synthetic/analysis_set.csv",
+      "note": "SYNTHETIC - pipeline demonstration only",
+      "level": "synthetic",
+      "bytes": 699,
+      "sha256": "8e7e301f00a2c5e4d96d0e78174c33e5c96fd64d7f2f44133dbadd32cdb10c46"
+    },
+    {
+      "dst": "synthetic/cases_with_ids.csv",
+      "note": "SYNTHETIC - pipeline demonstration only",
+      "level": "synthetic",
+      "bytes": 7816,
+      "sha256": "15077e4c5ad04197f134a5e326f77c91d0bfc602731e185d0fe0eb46d37094ba"
+    },
+    {
+      "dst": "synthetic/clinical.csv",
+      "note": "SYNTHETIC - pipeline demonstration only",
+      "level": "synthetic",
+      "bytes": 1939,
+      "sha256": "82f199f3e20c8cc3efbfcbaa35eb7254d91a0df4bcc417ebb3d47c82597944f4"
+    },
+    {
+      "dst": "synthetic/features/rad_features_h1.csv",
+      "note": "SYNTHETIC - pipeline demonstration only",
+      "level": "synthetic",
+      "bytes": 667643,
+      "sha256": "0962bc9bbbe9ac3015a38623130a50d92d268f667954f4dfc3140b50fca03fa4"
+    },
+    {
+      "dst": "synthetic/features/rad_features_h2.csv",
+      "note": "SYNTHETIC - pipeline demonstration only",
+      "level": "synthetic",
+      "bytes": 667656,
+      "sha256": "0e4380a8cfd1135e0559f5955ad600946dec678addc968d9e9c485bfb8a39531"
+    },
+    {
+      "dst": "synthetic/features/rad_features_h3.csv",
+      "note": "SYNTHETIC - pipeline demonstration only",
+      "level": "synthetic",
+      "bytes": 667628,
+      "sha256": "6209975baf264e55c85fc35f487a20445ad44d96dac1244d716d2d71275ccffd"
+    },
+    {
+      "dst": "synthetic/features/rad_features_h4.csv",
+      "note": "SYNTHETIC - pipeline demonstration only",
+      "level": "synthetic",
+      "bytes": 667625,
+      "sha256": "54dc97e59aeefdd3686ab2ffe680ef9a56c3990d6fa41ce91b9114fe8d2b81c0"
+    },
+    {
+      "dst": "synthetic/features/rad_features_h5.csv",
+      "note": "SYNTHETIC - pipeline demonstration only",
+      "level": "synthetic",
+      "bytes": 667748,
+      "sha256": "c5e979d012868e140c494ee6fface52ef02e8285e9619277cdbc2e79f4a33e59"
+    },
+    {
+      "dst": "synthetic/labels.csv",
+      "note": "SYNTHETIC - pipeline demonstration only",
+      "level": "synthetic",
+      "bytes": 743,
+      "sha256": "5c2f2847353413b322f2d9c5c8f3419f8ee0e3a9c4e9764bd5d895fb0bde0686"
+    },
+    {
+      "dst": "synthetic/model_inputs.csv",
+      "note": "SYNTHETIC - pipeline demonstration only",
+      "level": "synthetic",
+      "bytes": 2385,
+      "sha256": "5883753ce223d5817540665389a5edd002007b1feba503451d7b49e68fb2497e"
+    },
+    {
+      "dst": "synthetic/README.md",
+      "note": "SYNTHETIC - pipeline demonstration only",
+      "level": "synthetic",
+      "bytes": 1187,
+      "sha256": "bbd6dbb618962e7586e328436c78c8667a81fce09b645642ee309164a7968166"
+    },
+    {
+      "dst": "synthetic/scores/test1.csv",
+      "note": "SYNTHETIC - pipeline demonstration only",
+      "level": "synthetic",
+      "bytes": 1656,
+      "sha256": "3ea01ecbed5c3023da5d928fb0256e2024148b70e2ace53e3fd9aaa750cf8e09"
+    },
+    {
+      "dst": "synthetic/scores/test2.csv",
+      "note": "SYNTHETIC - pipeline demonstration only",
+      "level": "synthetic",
+      "bytes": 1658,
+      "sha256": "7ba44cf4d7440ddfa3b4e5ac64bfb8e4fa69c1699e904f35c739fd6a5d743164"
+    },
+    {
+      "dst": "synthetic/scores/test_prospective.csv",
+      "note": "SYNTHETIC - pipeline demonstration only",
+      "level": "synthetic",
+      "bytes": 1658,
+      "sha256": "e0180a2017f643486780e0c583bb09096f820833b991d0d09b2cff61f8e0c284"
+    },
+    {
+      "dst": "synthetic/scores/train.csv",
+      "note": "SYNTHETIC - pipeline demonstration only",
+      "level": "synthetic",
+      "bytes": 1655,
+      "sha256": "f185bc1687fecb6b70f84e030325d1d5f2cbd880087b2332e2a48a1e0647b738"
+    }
+  ]
+}
