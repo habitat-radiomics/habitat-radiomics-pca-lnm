@@ -230,9 +230,12 @@ def main() -> int:
     ap.add_argument("-v", "--verbose", action="store_true")
     ap.add_argument("--gate", action="store_true", default=True)
     ap.add_argument("--no-gate", dest="gate", action="store_false")
+    ap.add_argument("--config", default=None,
+                    help="path to an alternative config (e.g. one whose data_dir "
+                         "points at the controlled store)")
     args = ap.parse_args()
 
-    cfg = load_config()
+    cfg = load_config(args.config)
     P = paths(cfg)
     figdir = P["results_figures"]
 

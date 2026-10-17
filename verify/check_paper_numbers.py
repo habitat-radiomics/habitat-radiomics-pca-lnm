@@ -1052,7 +1052,18 @@ def main() -> int:
     # report it and exit non-zero rather than silently passing.
     _need = ["clinical.csv", "labels.csv", "analysis_set.csv", "model_inputs.csv",
              "scores/train.csv"]
-    _data = Path(__file__).resolve().parents[1] / "data"
+    # resolve through the config so a --config pointing at the controlled store
+    # (or any other data_dir) is honoured.  argparse has not run yet, so scan
+    # argv by hand; repo_path() is used instead of paths() so a preflight does
+    # not create directories as a side effect.
+    _cfgarg = None
+    _av = list(sys.argv[1:])
+    if "--config" in _av:
+        _i = _av.index("--config")
+        if _i + 1 < len(_av):
+            _cfgarg = _av[_i + 1]
+    from hrpca import repo_path
+    _data = repo_path(load_config(_cfgarg), "data_dir")
     _absent = [f for f in _need if not (_data / f).exists()]
     if _absent:
         print("=" * 92)

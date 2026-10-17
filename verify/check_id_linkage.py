@@ -67,9 +67,17 @@ def main() -> int:
     # The individual-level tables are not public (ChiCTR2500111002: IPD
     # sharing = No), so on a public clone there is nothing to compare: the
     # identifier key would be verified against itself.  Fail closed.
-    _rel = ["data/cases_with_ids.csv", "data/labels.csv", "data/clinical.csv"]
-    _root = Path(__file__).resolve().parents[1]
-    _absent = [r for r in _rel if not (_root / r).exists()]
+    _rel = ["cases_with_ids.csv", "labels.csv", "clinical.csv"]
+    # resolve through the config so --config can point at the controlled store
+    _cfgarg = None
+    _av = list(sys.argv[1:])
+    if "--config" in _av:
+        _i = _av.index("--config")
+        if _i + 1 < len(_av):
+            _cfgarg = _av[_i + 1]
+    from hrpca import load_config as _lc, repo_path as _rp
+    _data = _rp(_lc(_cfgarg), "data_dir")
+    _absent = [r for r in _rel if not (_data / r).exists()]
     if _absent:
         print("=" * 108)
         print("  SKIPPED — the individual-level tables are not present")

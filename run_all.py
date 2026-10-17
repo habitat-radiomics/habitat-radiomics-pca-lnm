@@ -57,7 +57,11 @@ def main() -> int:
     ap.add_argument("--verify-only", action="store_true")
     ap.add_argument("--include-features", action="store_true",
                     help="with --with-assemble, also copy the ~115 MB feature tables")
+    ap.add_argument("--config", default=None,
+                    help="alternative config; its data_dir may point at the "
+                         "controlled store")
     args = ap.parse_args()
+    cfgf = ["--config", args.config] if args.config else []
 
     failures = []
     if not args.verify_only:
@@ -69,7 +73,7 @@ def main() -> int:
                 failures.append(script)
 
     print(f"\n{'=' * 78}\n  ★ verification — paper value vs code value\n{'=' * 78}", flush=True)
-    proc = subprocess.run([PY, "-X", "utf8", "verify/check_paper_numbers.py", "-v"],
+    proc = subprocess.run([PY, "-X", "utf8", "verify/check_paper_numbers.py", "-v", *cfgf],
                           cwd=str(ROOT))
     if proc.returncode == 3:
         print("\n  → SKIPPED: the submitted supplement is incomplete (mid-rebuild);"
@@ -80,7 +84,7 @@ def main() -> int:
     # both published-value verifiers parse the submitted documents at run time,
     # so exit 3 = the submission workspace is mid-rebuild (environment, not data)
     for script, label in [("verify/check_disputed_items.py", "disputed items")]:
-        proc = subprocess.run([PY, "-X", "utf8", *script.split()], cwd=str(ROOT))
+        proc = subprocess.run([PY, "-X", "utf8", *script.split(), *cfgf], cwd=str(ROOT))
         if proc.returncode == 3:
             print(f"\n  → SKIPPED ({label}): the submitted supplement is incomplete"
                   " (mid-rebuild); environment problem, not a numerical failure.")
@@ -92,7 +96,7 @@ def main() -> int:
                            "figure ↔ table numeric agreement"),
                           ("verify/scan_identifiers.py --gate",
                            "identifier gate (no admission numbers may ship)")]:
-        cmd = [PY, "-X", "utf8", *script.split()]
+        cmd = [PY, "-X", "utf8", *script.split(), *cfgf]
         if not run(cmd, label):
             failures.append(script)
 

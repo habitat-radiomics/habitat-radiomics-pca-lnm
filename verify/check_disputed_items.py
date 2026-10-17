@@ -25,11 +25,15 @@ from scipy import stats
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from hrpca import paper as PP                       # noqa: E402
+from hrpca import load_config as _load_config       # noqa: E402
+from hrpca import repo_path as _repo_path           # noqa: E402
 from hrpca.metrics import (auc, delong_p, hosmer_lemeshow,   # noqa: E402
                            continuous_nri, idi)
 from hrpca.model import fit_logistic                # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
+# ``DATA`` is resolved from the config in main() so that --config can point at
+# the controlled store instead of the repository's own (synthetic-only) data/.
 DATA = ROOT / "data"
 ARCH = Path(r"C:\Users\l\Desktop\lunwen3")
 
@@ -328,7 +332,15 @@ def main() -> int:
     # Without it this check cannot run, and must say so rather than crash or pass.
     _need = ["clinical.csv", "labels.csv", "analysis_set.csv", "model_inputs.csv",
              "scores/train.csv"]
-    _data = Path(__file__).resolve().parents[1] / "data"
+    # resolve through the config so --config can point at the controlled store
+    _cfgarg = None
+    _av = list(sys.argv[1:])
+    if "--config" in _av:
+        _i = _av.index("--config")
+        if _i + 1 < len(_av):
+            _cfgarg = _av[_i + 1]
+    _data = _repo_path(_load_config(_cfgarg), "data_dir")
+    globals()["DATA"] = _data          # the body reads module-level DATA
     _absent = [f for f in _need if not (_data / f).exists()]
     if _absent:
         print("=" * 108)

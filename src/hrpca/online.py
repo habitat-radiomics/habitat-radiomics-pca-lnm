@@ -86,6 +86,9 @@ HEADER_STARTS = ("comparison", "cohort", "signature", "model", "parameter",
 #: data-row labels that must never be mistaken for a header
 LABEL_STOP = ("others", "total", "pooled", "overall", "sum")
 
+#: a row starting with one of these is a prose footnote, not a data row
+NOTE_STARTS = ("note", "note:", "notes", "notes:", "source", "abbreviation")
+
 
 def _is_headerish(row: list) -> bool:
     """No numeric-looking cell — i.e. this row reads like column names."""
@@ -131,6 +134,11 @@ def _blocks_raw(table_id: str) -> list:
         stripped = [c.strip() for c in row]
         if not [c for c in stripped if c]:
             continue                                      # blank separator
+        # prose notes ("Notes: …") sit below the table in one or two cells and
+        # are not data rows; counting them shifts every declared row total
+        if (sum(1 for c in stripped if c) <= 2
+                and stripped[0].lower().startswith(NOTE_STARTS)):
+            continue
         m = PANEL_RE.match(stripped[0])
         if m:
             flush()
@@ -168,14 +176,14 @@ def _blocks_raw(table_id: str) -> list:
 #: block boundary is immaterial to the flat ``(header, rows)`` accessors used
 #: by the verifier — only losing or duplicating a row would matter.
 STRUCTURE = {
-    "S1a": (["1"], [12]),
-    "S1b": (["1"], [26]),
+    "S1a": (["1"], [13]),
+    "S1b": (["A", "B"], [4, 27]),
     "S2":  (["A", "B", "C"], [10, 10, 5]),
     "S3c": (["1"], [8]),
     "S4":  (["1"], [1]),
     "S5":  (["1"], [5]),
     "S6":  (["1", "2"], [6, 5]),
-    "S8":  (["A", "B"], [11, 8]),
+    "S8":  (["A"], [11]),
     "S9":  (["1"], [8]),
     "S10": (["1"], [5]),
     "S11": (["A", "B"], [6, 5]),

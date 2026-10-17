@@ -151,6 +151,9 @@ def main() -> int:
                     help="exit 1 if any ★high finding remains in tracked files")
     ap.add_argument("--paths", nargs="*", default=None)
     ap.add_argument("--all", action="store_true", help="scan untracked files too")
+    # accepted for CLI uniformity with the other verifiers; this gate scans the
+    # repository itself, so a config's data_dir cannot change its target
+    ap.add_argument("--config", default=None, help="accepted and ignored")
     args = ap.parse_args()
 
     if args.paths:

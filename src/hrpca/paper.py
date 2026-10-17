@@ -254,13 +254,25 @@ def table_s15_regression() -> dict:
 
 
 def table_s16a_clinical() -> dict:
-    """Table S16 — first block: {comparator: {cohort: auc}}."""
+    """Table S16 — first block: {comparator: {cohort: auc}}.
+
+    The file stacks two tables: the AUC block, then a second header
+    (``Comparator, Comparator AUC, Combined AUC, ΔAUC, 95% CI, P``) followed by
+    the ΔAUC rows.  Those ΔAUC rows repeat two of the AUC row labels, so a flat
+    pass over every row would overwrite the AUC entries (and emit a bogus
+    ``Comparator`` key).  Stop at the first row whose AUC cells are not all
+    numbers — that is the second header.
+    """
     rows = parse_md_table(_rows_as_md("S16"))
     out = {}
     for r in rows[1:]:
-        if len(r) >= 6:
-            out[r[0].strip()] = dict(train=num(r[1]), test1=num(r[2]), test2=num(r[3]),
-                                     test_prospective=num(r[4]), pooled=num(r[5]))
+        if len(r) < 6:
+            continue
+        vals = [num(c) for c in r[1:6]]
+        if any(v is None for v in vals):
+            break
+        out[r[0].strip()] = dict(train=vals[0], test1=vals[1], test2=vals[2],
+                                 test_prospective=vals[3], pooled=vals[4])
     return out
 
 
