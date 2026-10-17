@@ -111,14 +111,22 @@ def scores(ids, rng, n_cohorts: int = 4) -> dict:
 
 
 def cases_with_ids(scores_by_cohort) -> pd.DataFrame:
-    """Same columns as ``data/cases_with_ids.csv``."""
+    """Same columns as ``data/cases_with_ids.csv``.
+
+    ``real_id`` is prefixed with a per-cohort letter so the key is unique
+    *across* cohorts as well as within one — a bare ``SYN0001`` would repeat in
+    every cohort and make any join on ``real_id`` alone ambiguous, which is
+    exactly the class of defect this key exists to prevent.
+    """
     rows = []
-    for c, d in scores_by_cohort.items():
+    for ci, (c, d) in enumerate(scores_by_cohort.items()):
+        tag = "TRN" if c == "train" else "TST"
         for _, r in d.iterrows():
             row = {"patient_index": int(r["patient_index"]), "label": int(r["label"])}
             for s in SIGNATURES:
                 row[s] = float(r[s])
-            row.update({"real_id": f"SYN{int(r['patient_index']):04d}", "cohort": c,
+            row.update({"real_id": f"SYN-{tag}{ci}-{int(r['patient_index']):04d}",
+                        "cohort": c,
                         "ck": "—", "s_HabitatH2": 0.0, "s_HabitatH4": 0.0,
                         "dom": "H2", "margin": 0.0})
             rows.append(row)

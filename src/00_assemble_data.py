@@ -68,6 +68,116 @@ def _copy(src: Path, dst: Path, records: list, note: str) -> bool:
     return True
 
 
+# ---------------------------------------------------------------------------
+# real_id repair
+# ---------------------------------------------------------------------------
+# The archived ``scripts/_cases_with_ids.csv`` carries a ``real_id`` column that
+# is **row-shifted by one** in the training cohort (and by one in a few
+# prospective rows): for 306/340 uniquely identifiable training rows the ID on
+# row *i* belongs to row *i+1*.  Trusting it silently mislabels every
+# score-row -> patient link in the training cohort and makes the deployed
+# training scores look like a broken model (training AUC 0.570 instead of 0.798).
+#
+# The repair does not guess.  ``scores_highprec.csv`` carries the same ten
+# probability columns *with* the study identifier, so each deployed score row
+# can be resolved exactly: the seven raw signature probabilities, rounded to the
+# two decimals at which the deployed files were released, form a key that is
+# unique for all 1,016 patients.  The rebuilt ``real_id`` is then cross-checked
+# against the H2/H4 fingerprint and the row is rejected if either disagrees.
+_SIG_COLS = ["Clinic", "Habitat", "HabitatH1", "HabitatH2", "HabitatH3", "HabitatH4",
+             "HabitatH5"]
+# ``cases_with_ids.csv`` labels its rows in Chinese, ``scores_highprec.csv`` in
+# English; the repair key must use one vocabulary.
+_COHORT_EN = {"训练": "train", "测试1": "test1", "测试2": "test2",
+              "前瞻": "test_prospective"}
+
+
+def _repair_real_id(data_dir: Path) -> tuple[int, int]:
+    """Rebuild ``real_id`` in ``cases_with_ids.csv`` from the keyed score export.
+
+    Returns ``(n_repaired, n_disagree_before)``.  Raises if any row cannot be
+    resolved uniquely, or if the rebuild does not agree with the H2/H4
+    fingerprint — a silent fallback here would reintroduce the defect.
+    """
+    cwi_path = data_dir / "cases_with_ids.csv"
+    hp_path = data_dir / "scores_highprec.csv"
+    if not cwi_path.exists() or not hp_path.exists():
+        log("  [repair] cases_with_ids.csv or scores_highprec.csv absent — skipped")
+        return 0, 0
+
+    cwi = pd.read_csv(cwi_path, encoding="utf-8-sig")
+    hp = pd.read_csv(hp_path, encoding="utf-8-sig")
+    for df, col in ((cwi, "real_id"), (hp, "ID")):
+        df["_k"] = df[col].astype(str).map(_bare).str.strip()
+    hp["_grp"] = hp["group"].astype(str).str.strip()
+
+    missing = [c for c in _SIG_COLS if c not in hp.columns]
+    if missing:
+        raise RuntimeError(f"scores_highprec.csv lacks {missing}")
+
+    # one key table per cohort: 7 probabilities rounded to the released precision
+    key: dict[tuple, str] = {}
+    for _, r in hp.iterrows():
+        k = (r["_grp"],) + tuple(round(float(r[c]), 2) for c in _SIG_COLS)
+        if k in key:
+            raise RuntimeError(
+                f"key collision in scores_highprec.csv for {k}: "
+                f"{key[k]} vs {r['_k']}")
+        key[k] = r["_k"]
+
+    # the deployed score files, in the same row order as cases_with_ids
+    new_id, n_old_ok = [], 0
+    for _, r in cwi.iterrows():
+        coh = _COHORT_EN.get(str(r["cohort"]).strip(), str(r["cohort"]).strip())
+        k = (coh,) + tuple(
+            round(float(r[c]), 2) for c in _SIG_COLS if c in cwi.columns)
+        if len(k) != len(_SIG_COLS) + 1:
+            raise RuntimeError("cases_with_ids.csv lacks the signature columns needed to repair real_id")
+        hit = key.get(k)
+        if hit is None:
+            raise RuntimeError(f"cannot resolve row patient_index={r.get('patient_index')} "
+                               f"cohort={r.get('cohort')} — refusing to guess")
+        new_id.append(hit)
+
+    old = cwi["_k"].tolist()
+    n_old_ok = sum(1 for a, b in zip(old, new_id) if a == b)
+    cwi = cwi.drop(columns=["_k"])
+    cwi["real_id"] = new_id
+
+    # cross-check 1: every rebuilt ID must exist in model_inputs.csv
+    mi = pd.read_csv(data_dir / "model_inputs.csv", encoding="utf-8-sig")
+    mi["_k"] = mi["ID"].astype(str).map(_bare).str.strip()
+    known = set(mi["_k"])
+    unknown = sorted({i for i in new_id if i not in known})
+    if unknown:
+        raise RuntimeError(f"{len(unknown)} rebuilt real_id values absent from "
+                           f"model_inputs.csv: {unknown[:5]}")
+
+    # cross-check 2: the rebuilt ID must be the patient whose H2/H4 the row's
+    # own values round to (the fingerprint that exposed the defect)
+    mi = mi.set_index("_k")
+    fp = {}
+    for _, r in mi.iterrows():
+        fp.setdefault((round(float(r["H2"]), 2), round(float(r["H4"]), 2)),
+                      set()).add(r.name)
+    uniq = {k: next(iter(v)) for k, v in fp.items() if len(v) == 1}
+    n_fp = n_fp_ok = 0
+    for _, r in cwi.iterrows():
+        kk = (round(float(r["HabitatH2"]), 2), round(float(r["HabitatH4"]), 2))
+        if kk in uniq:
+            n_fp += 1
+            if uniq[kk] == r["real_id"]:
+                n_fp_ok += 1
+    if n_fp and n_fp_ok != n_fp:
+        raise RuntimeError(f"fingerprint cross-check failed: {n_fp_ok}/{n_fp}")
+
+    cwi.to_csv(cwi_path, index=False, encoding="utf-8-sig")
+    log(f"  [repair] real_id rebuilt: {len(new_id)}/{len(new_id)} resolved uniquely; "
+        f"{n_old_ok}/{len(new_id)} were already correct "
+        f"(fingerprint {n_fp_ok}/{n_fp})")
+    return len(new_id), len(new_id) - n_old_ok
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default=None)
@@ -260,6 +370,20 @@ def main() -> int:
           "★ authoritative key: patient_index -> real_id + cohort")
     _copy(Path(A["fullprec_scores"]), P["data"] / "fullprec_scores.csv", records,
           "deployed scores with identifiers and 16-digit precision")
+    # ★ the archived key file is row-shifted in the training cohort — rebuild it
+    #   from the keyed score export and refuse to continue if that is impossible
+    #   (needs scores_highprec.csv, written in step [1]).
+    _n_fixed, _n_changed = _repair_real_id(P["data"])
+    if _n_fixed:
+        # the file changed on disk, so its manifest entry must be recomputed
+        for _r in records:
+            if _r["dst"] == "cases_with_ids.csv":
+                _p = P["data"] / "cases_with_ids.csv"
+                _r["bytes"] = _p.stat().st_size
+                _r["sha256"] = sha256(_p)
+                _r["note"] = (f"★ authoritative key: patient_index -> real_id + cohort "
+                              f"(real_id rebuilt from scores_highprec.csv; "
+                              f"{_n_changed} row(s) corrected)")
     shap = deploy / "SHAP_output"
     for rel, note in [
         ("h2h4_final/meta_all.csv", "closed-form SHAP inputs, final combined model"),

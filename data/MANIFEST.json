@@ -1,9 +1,9 @@
 {
-  "generated_by": "rebuilt after the IPD withdrawal (2026-10-17)",
+  "generated_by": "rebuilt after the real_id row-shift fix (2026-10-17)",
   "n_files": 18,
-  "total_bytes": 3364753,
+  "total_bytes": 3364993,
   "identifier_map_location": "OUTSIDE the repository (never committed)",
-  "note": "This manifest describes the PUBLIC repository only.  The individual-level analysis dataset (ChiCTR2500111002: IPD sharing = No) and the run outputs derived from it are held in a controlled institutional store.",
+  "note": "This manifest describes the PUBLIC repository only.  The individual-level analysis dataset (ChiCTR2500111002: IPD sharing = No) and the run outputs derived from it are held in a controlled institutional store.  See docs/REAL_ID_ROW_SHIFT.md.",
   "withdrawn_individual_level": [
     "clinical.csv",
     "clinical_workspace.csv",
@@ -51,8 +51,8 @@
       "dst": "synthetic/cases_with_ids.csv",
       "note": "SYNTHETIC - pipeline demonstration only",
       "level": "synthetic",
-      "bytes": 7816,
-      "sha256": "15077e4c5ad04197f134a5e326f77c91d0bfc602731e185d0fe0eb46d37094ba"
+      "bytes": 8056,
+      "sha256": "dac3a3333bb91bd82e13eca676e2ba1fcc8e2ec2580a5016791c05cc8a23b371"
     },
     {
       "dst": "synthetic/clinical.csv",
