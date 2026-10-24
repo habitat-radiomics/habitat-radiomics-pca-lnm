@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Generate a **fully synthetic** dataset with the same schema as the real one.
 
@@ -24,6 +24,8 @@ Usage
 """
 from __future__ import annotations
 
+import os
+
 import argparse
 import sys
 from pathlib import Path
@@ -35,7 +37,7 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
 #: where the real tables live (OUTSIDE the public repository)
-CONTROLLED = Path(r"C:\Users\l\Desktop\lunwen3\00_受控数据_禁传\repo_data_个体级")
+CONTROLLED = Path(os.environ.get("HRPCA_CONTROLLED_DIR", ""))
 
 OUT = REPO / "data" / "synthetic"
 COHORTS = ["train", "test1", "test2", "test_prospective"]

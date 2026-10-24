@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Verify the five disputed items against the **current authoritative documents**.
 
@@ -13,6 +13,8 @@ published value, the recomputed value, the source file of each, and the ID-join
 method used, so that a third party can reproduce it independently.
 """
 from __future__ import annotations
+
+import os
 
 import re
 import sys
@@ -35,7 +37,7 @@ ROOT = Path(__file__).resolve().parents[1]
 # ``DATA`` is resolved from the config in main() so that --config can point at
 # the controlled store instead of the repository's own (synthetic-only) data/.
 DATA = ROOT / "data"
-ARCH = Path(r"C:\Users\l\Desktop\lunwen3")
+ARCH = Path(os.environ.get("HRPCA_ARCHIVE_ROOT", ""))
 
 COH = ["train", "test1", "test2", "test_prospective"]
 EXT = ["test1", "test2", "test_prospective"]
@@ -78,7 +80,7 @@ def check_1_delong():
     sc = load_scores()
     pooled = pd.concat([sc[c] for c in EXT], ignore_index=True)
     comp = [("Clinical (ISUP + PI-RADS)", "Clinic"), ("Habitat H4", "HabitatH4"),
-            ("Habitat H2", "HabitatH2"), ("All-habitat (27 features)", "Habitat")]
+            ("Habitat H2", "HabitatH2"), ("All-habitat (25 features)", "Habitat")]
     src = "derived_data/<cohort>_scores_label.csv（部署分数）"
     join = "无需连接（同表内逐患者）"
     for c in COH + ["pooled"]:
@@ -274,7 +276,7 @@ def check_6_table1():
     print("⑥ Table 1 —— 论文值（运行时解析） vs 用正确 ID 连接重算")
     print("=" * 108)
     pub = PP.table1_baseline()
-    # ★ the ISUP / PI-RADS rows of Table 1 come from C:/O/Clinic.csv (which has
+    # ★ the ISUP / PI-RADS rows of Table 1 come from <archive>/Clinic.csv (which has
     #   exactly 7 missing ISUP in the training cohort, matching the footnote),
     #   NOT from the heatmap export's ISUP column (which fills all 398 and would
     #   give 83 for grade 3).
@@ -353,7 +355,7 @@ def main() -> int:
         print("=" * 108)
         return 3
 
-    # preflight: published values are parsed live from C:/O/投稿（压缩）/, so a
+    # preflight: published values are parsed live from <submission-package>/, so a
     # mid-rebuild supplement must be reported as an ENVIRONMENT problem (exit 3)
     # rather than as a numerical failure
     ok, missing = PP.preflight()
@@ -363,7 +365,7 @@ def main() -> int:
         print("=" * 108)
         print(f"  missing {len(missing)} table(s): {', '.join(missing)}")
         print("  This is an environment problem, not a numerical one.  Re-run once")
-        print("  C:/O/投稿（压缩）/02_补充材料/ has finished rebuilding.")
+        print("  <submission-package>/02_补充材料/ has finished rebuilding.")
         print("=" * 108)
         return 3
 

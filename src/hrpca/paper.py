@@ -1,29 +1,31 @@
-"""解析权威稿件，抽出所有需要复现的数字。
+﻿"""解析权威稿件，抽出所有需要复现的数字。
 
 ★ 每次都从磁盘上的权威文件重新解析，**绝不使用硬编码的历史值**
 （教训：2026-10-16，我引用了 workspace 里的过期对照稿
   `lunwen3\\投稿版_Manuscript_FINAL_EN.md`，它含已废弃的 "Table 4"，导致 11 项误报）。
 
 权威文件（**双源**）：
-  正文        C:\\O\\投稿（压缩）\\05_源文件\\Manuscript_FINAL.md
-  补充材料    C:\\O\\投稿（压缩）\\02_补充材料\\Supplementary_Material.md
-  在线数据    C:\\O\\投稿（压缩）\\15_在线数据\\*.csv
+  正文        <project>\\05_源文件\\Manuscript_FINAL.md
+  补充材料    <project>\\02_补充材料\\Supplementary_Material.md
+  在线数据    <project>\\15_在线数据\\*.csv
 
 补充材料**有意瘦身**（33 → 18 页）：正文只印 4 张表（S3、S3b、S3d、S20），
 其余表格移到 ``15_在线数据/`` 的 CSV 供在线发布。因此：
   * PDF 里仍印的表 → 解析 ``Supplementary_Material.md``
   * 已外移的表     → 解析 ``online.py`` 读到的 CSV
-只读，不修改 ``C:\\O``。
+只读，不修改项目根目录。
 """
 from __future__ import annotations
+
+import os
 
 import re
 from pathlib import Path
 
 from . import online as ON
 
-MANUSCRIPT = Path(r"C:\O\投稿（压缩）\05_源文件\Manuscript_FINAL.md")
-SUPPLEMENT = Path(r"C:\O\投稿（压缩）\02_补充材料\Supplementary_Material.md")
+MANUSCRIPT = Path(os.environ.get("HRPCA_MANUSCRIPT", ""))
+SUPPLEMENT = Path(os.environ.get("HRPCA_SUPPLEMENT", ""))
 
 #: tables that the slimmed supplement still prints
 PRINTED_TABLES = ("Table S3", "Table S3b", "Table S3d", "Table S20")

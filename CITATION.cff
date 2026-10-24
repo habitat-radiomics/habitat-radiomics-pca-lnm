@@ -25,30 +25,36 @@ repository-code: "https://github.com/habitat-radiomics/habitat-radiomics-pca-lnm
 preferred-citation:
   type: article
   title: >-
-    Preoperative Lymph Node Staging in Prostate Cancer: Endpoint-Driven
-    Purification Outperforms Richer Intratumoral Decomposition
+    Endpoint-Driven Purification Outperforms Richer Habitat Decomposition in
+    Preoperative Lymph Node Staging of Prostate Cancer
   authors:
     - family-names: Liu
       given-names: Lei
+    - family-names: Chen
+      given-names: Jin
+    - family-names: Deng
+      given-names: Longxin
     - family-names: Lei
       given-names: Yujuan
+    - family-names: Chen
+      given-names: Yun
     - family-names: Meng
       given-names: Huanna
     - family-names: Liu
       given-names: Hanlei
-    - family-names: Chen
-      given-names: Yun
-    - family-names: Yin
-      given-names: Likang
-    - family-names: Zhang
-      given-names: Saisai
+    - family-names: Xue
+      given-names: Shuqin
+    - family-names: Liu
+      given-names: Sikai
+    - family-names: Hou
+      given-names: Weishu
     - family-names: Yin
       given-names: Yu
     - family-names: Tai
       given-names: Sheng
+    - family-names: Chen
+      given-names: Rui
     - family-names: Li
       given-names: Danyan
-    - family-names: Ma
-      given-names: Yichuan
     - family-names: Wang
       given-names: Xiao

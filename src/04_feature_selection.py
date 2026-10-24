@@ -1,22 +1,18 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""04 — feature selection (ICC -> near-zero variance -> collinearity -> LASSO).
+"""04 — feature selection (near-zero variance -> collinearity -> LASSO).
 
-The four gates, in the order used in the study (Table S8):
+The three gates, in the order used in the study (Table S8):
 
 ======  ==========================================================================
  Gate    Rule
 ======  ==========================================================================
- ICC     keep features with ICC >= 0.80 between the two radiologists' target regions
  NZV     drop near-zero-variance features (``VarianceThreshold``, default 1e-6)
  COLL    drop features with |Pearson r| > 0.9 to an already-kept feature
  LASSO   L1 logistic regression, 10-fold cross-validation, lambda = 0.0233
 ======  ==========================================================================
 
-Only the variance / collinearity / LASSO gates are runnable from the data that
-ship with this repository.  The ICC gate needs the two readers' target regions,
-which are not distributed; ``--icc-table`` accepts a pre-computed per-feature
-ICC table if a reader has one.
+An optional ``--icc-table`` may be supplied; ICC is not applied by default.
 
 Usage
 -----
@@ -39,7 +35,7 @@ ICC_CUTOFF = 0.80
 CORR_CUTOFF = 0.90
 VARIANCE_THRESHOLD = 1e-6
 LASSO_LAMBDA = 0.0233
-N_RETAINED = 27
+N_RETAINED = 25
 
 
 # ---------------------------------------------------------------------------
@@ -110,7 +106,7 @@ def main() -> int:
 
     cfg = load_config(args.config)
     P = paths(cfg)
-    banner("04 · feature selection (ICC -> NZV -> collinearity -> LASSO)")
+    banner("04 · feature selection (NZV -> collinearity -> LASSO)")
 
     matrix_path = Path(args.matrix) if args.matrix else P["data"] / "candidate_features.csv"
     if not matrix_path.exists():
@@ -129,8 +125,8 @@ def main() -> int:
         steps["ICC >= %.2f" % ICC_CUTOFF] = len(cols)
         log(f"  after ICC  >= {ICC_CUTOFF}: {len(cols)}")
     else:
-        steps["ICC"] = "not run (needs the two readers' target regions)"
-        log("  ICC gate skipped (no --icc-table)")
+        steps["ICC"] = "not run (optional --icc-table not supplied)"
+        log("  ICC not applied (optional --icc-table not supplied)")
 
     cols = variance_filter(matrix[cols])
     steps["near-zero variance"] = len(cols)

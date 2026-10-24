@@ -1,9 +1,9 @@
-> # ⛔ RETRACTED — DO NOT USE
+﻿> # ⛔ RETRACTED — DO NOT USE
 >
 > **This document is superseded.**  Its Table 1 and Table S15 conclusions
 > (training n = 374; PI-RADS multivariable OR 1.565; ISUP grade 3 = 83; PSA
 > density OR 1.123) were all **wrong**: they came from the 1,097-row
-> `lunwen3/Clinic.csv`, not from the authoritative `C:/O/Clinic.csv`.
+> `lunwen3/Clinic.csv`, not from the authoritative `<archive>/Clinic.csv`.
 >
 > With the authoritative source, **Table S15 reproduces 14/14 cells with
 > n = 377 and PI-RADS OR 1.611**, and **Table 1 reproduces 34/34 cells with
@@ -21,7 +21,7 @@
 **生成日期**：2026-10-16
 **核验人**：代码库重写会话
 **范围**：按用户指定的顺序核实 5 条差异；Table 1 用正确连接重算
-**铁律遵守**：`C:\O\投稿（压缩）` **未做任何修改**（只读引用）
+**铁律遵守**：`<submission-package>` **未做任何修改**（只读引用）
 
 ---
 
@@ -31,7 +31,7 @@
 但归档里有**唯一**一张能把三者连起来的表：
 
 ```
-C:\Users\l\Desktop\lunwen3\scripts\_cases_with_ids.csv          （1,016 行）
+<deploy-root>/scripts\_cases_with_ids.csv          （1,016 行）
 ```
 
 它含 `patient_index, label, Clinic, Habitat, HabitatH1..H5, Combined,

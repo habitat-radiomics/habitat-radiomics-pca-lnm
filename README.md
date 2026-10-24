@@ -21,7 +21,7 @@ python -X utf8 verify/check_paper_numbers.py
 | `python -X utf8 verify/check_paper_numbers.py` | every published number, cell by cell | PASS 733 / DISCREPANCY 2 / SKIP 77 / **FAIL 0** | **exit 3** (fail-closed) |
 | `python -X utf8 verify/check_id_linkage.py` | the cross-table identifier key (structural, coverage, fingerprint, positional control) | PASS 17 / WARN 4 / INFO 4 | **exit 3** |
 | `python -X utf8 verify/check_disputed_items.py` | the six items that were disputed during review | PASS 113 / INFO 6 | **exit 3** |
-| `python -X utf8 verify/check_online_vs_paper.py` | ★ **online tables ↔ parser** — every one of the 22 externalised CSVs must parse into its declared structure, every `paper.py` accessor must reproduce an independent positional read, all numeric cells must parse, and quantities stated in two tables must agree | PASS 54 / FAIL 0 (1,011 numeric cells) | **exit 3** (the submission package is read from `C:\O`, never copied in) |
+| `python -X utf8 verify/check_online_vs_paper.py` | ★ **online tables ↔ parser** — every one of the 22 externalised CSVs must parse into its declared structure, every `paper.py` accessor must reproduce an independent positional read, all numeric cells must parse, and quantities stated in two tables must agree | PASS 54 / FAIL 0 (1,011 numeric cells) | **exit 3** (the submission package is read from `<archive>`, never copied in) |
 | `python -X utf8 verify/check_figure_values.py` | ★ **figure ↔ table** — every number printed in `results/figures` is re-derived from its authoritative table (text extracted from the vector PDFs, no pixel comparison) | PASS 50 / FAIL 0 | **exit 3** |
 | `python -X utf8 verify/scan_identifiers.py --gate` | ★ **identifier gate** — no admission number may ship | PASS | **PASS** (it scans the repository itself) |
 | `python -X utf8 verify/check_paper_numbers.py --synthetic` | ★ **pipeline demonstration** on the fabricated dataset | — | **exit 0** if the code path runs |
@@ -45,7 +45,7 @@ numerical failure.
 > The supplement was **deliberately slimmed from 33 to 18 pages**.  It now
 > *prints* only four tables — **S3, S3b, S3d, S20** — because the journal
 > encourages authors to post raw tables/spreadsheets online.  The other
-> **22 tables live as CSVs in `C:/O/投稿（压缩）/15_在线数据/`**.
+> **22 tables live as CSVs in `<submission-package>/15_在线数据/`**.
 >
 > `src/hrpca/paper.py` therefore reads **both**:
 >
@@ -150,12 +150,12 @@ validated in two external cohorts (339 + 189) and a prospective cohort (90).
 
 | Step | Method |
 |---|---|
-| Segmentation | 3D nnU-Net on T2WI (Dice 0.95 vs manual delineation, n = 30) |
+| Segmentation | 3D nnU-Net on T2WI (mean Dice 0.886 on 13 held-out cases) |
 | Level-1 clustering | voxel-wise K-means on ADC/DWI/normalised T2WI inside the gland; K = 2 by the Calinski–Harabasz index; the lowest-mean-ADC cluster is the target region |
 | Level-2 clustering | voxel-wise K-means on local texture inside that region; **K = 5** selected by repeated 10×10-fold cross-validation on the clinical endpoint |
-| Features | PyRadiomics 3.0.1 (IBSI), region-remapping aggregation → 1,197 candidates |
-| Selection | ICC ≥ 0.80 → near-zero variance → collinearity (\|r\| ≤ 0.9) → LASSO (λ = 0.0233) → **27 retained** |
-| Models | clinical (ISUP + PI-RADS, LR), habitat-specific (H1–H5), all-habitat (27 features, LR), **combined** (clinical probability + H2 + H4, LR) |
+| Features | PyRadiomics 3.0.1 (IBSI), region-remapping aggregation → 1,197 candidate features per habitat (5,985 across five habitats) |
+| Selection | near-zero variance → collinearity (\|r\| ≤ 0.9) → LASSO (λ = 0.0233) → **25 retained** |
+| Models | clinical (ISUP + PI-RADS, LR), habitat-specific (H1–H5), all-habitat (25 features, LR), **combined** (clinical probability + H2 + H4, LR) |
 | Comparators | information-matched multisequence whole-tumour radiomics; 3D ResNet-18 |
 
 ---
@@ -171,6 +171,9 @@ PyRadiomics 3.0.1 and SimpleITK 2.1.1.  The statistics and figures in
 `src/05`–`src/10` and all of `verify/` have also been verified on
 **Python 3.12 / scikit-learn 1.4 / statsmodels 0.14**; `requirements.txt` records
 both sets.
+
+Paths are supplied through environment variables — see §11 and
+`.env.example`.
 
 ---
 
@@ -238,7 +241,7 @@ they never report PASS on an empty dataset:
 *(Recorded while the individual-level tables were still in the repository; it
 documents a property of the archive, not of the synthetic set.)*
 
-Refitting a logistic model on the 27 retained features taken from the habitat
+Refitting a logistic model on the 25 retained features taken from the habitat
 feature tables gives a **training AUC of 0.745–0.756**, and the archived
 coefficient file applied to the same columns gives **0.700**; neither reproduces
 the reported **0.864**.  The frozen per-patient scores do give 0.864.  The
@@ -247,7 +250,9 @@ and are **not** the matrix on which the reported model was fitted.  All 87 cells
 of the retained-feature table (names, habitats, RF importance, mean |SHAP|) are
 reproduced from `data/shap/SHAP_k5_feature_stats.csv`, so the retained set itself
 is consistent.  `src/04_feature_selection.py` documents this and will not
-silently return a different 27-feature set.
+silently return a different 25-feature set.  The script name
+`rebuild_27feature_model.py` is retained from the archive; its
+reconstruction target is the 25-feature model.
 
 ## 5 · Conventions the numbers depend on
 
@@ -281,14 +286,14 @@ below was hit at least once during preparation.
 
 | # | Trap | Correct handling |
 |---|---|---|
-| **T1** | ★ **The authoritative clinical table is `C:/O/Clinic.csv` (1,016 rows, 2026-10-06).**  `lunwen3/Clinic.csv` (1,097 rows, 2026-09-03) is a **later build, not the analysis table** | using the 1,097-row copy gives training n = 395, complete cases = **374**, **PI-RADS multivariable OR 1.5653**, and ISUP counts summing to 398 — **all four are wrong**.  With `C:/O/Clinic.csv`: training n = 398, complete cases = **377**, PI-RADS OR **1.611**, ISUP 13/61/76/104/137 = **391** (7 missing, exactly as the footnote says) |
+| **T1** | ★ **The authoritative clinical table is `<archive>/Clinic.csv` (1,016 rows, 2026-10-06).**  `lunwen3/Clinic.csv` (1,097 rows, 2026-09-03) is a **later build, not the analysis table** | using the 1,097-row copy gives training n = 395, complete cases = **374**, **PI-RADS multivariable OR 1.5653**, and ISUP counts summing to 398 — **all four are wrong**.  With `<archive>/Clinic.csv`: training n = 398, complete cases = **377**, PI-RADS OR **1.611**, ISUP 13/61/76/104/137 = **391** (7 missing, exactly as the footnote says) |
 | **T2** | The released score files may be **rounded** — the training cohort's `Clinic` column has two decimals | training AUCs must come from the unrounded source (§5.1 #1); the `Combined` column of the historical export is a superseded model (§5.1 #2) |
-| **T3** | `C:/O/sol21…` exists twice: the deployment copy and `…- 副本` (**old version**, four-variable nomogram, combined training AUC 0.795) | never read a path containing `副本` |
+| **T3** | `<archive>/sol21…` exists twice: the deployment copy and `…- 副本` (**old version**, four-variable nomogram, combined training AUC 0.795) | never read a path containing `副本` |
 | **T4** | `数据与图_导出/data/HabitatProfiles_4cohort*.csv` (2026-09-11) is an **old export** whose means and z-scores (ddof = 1) disagree with the current Table S2 | always recompute from `rad_features_h*.csv`, z-scores with **ddof = 0** |
 | **T5** | `*_scores_label.csv` carries only `patient_index`, **no identifier**; the four cohorts are ordered differently | **never pair rows by position** — positional matching reproduces only **36 / 339** rows in test cohort 1 and 14 / 189 in test cohort 2.  The correct chain is `scores_label.csv ─(patient_index)→ cases_with_ids.csv ─(real_id)→ Clinic.csv / label.csv` (§7) |
 | **T6** ★ | The training cohort's `real_id` in `cases_with_ids.csv` is **row-shifted by one** (43 / 398 correct); the prospective cohort is shifted in 7 / 90 rows.  Reading it verbatim makes the deployed combined model look broken (**training AUC 0.570** instead of 0.798) | **fixed in `src/00_assemble_data.py`** — `_repair_real_id()` rebuilds the column from the 7-probability key in `scores_highprec.csv` and refuses to proceed if any row is ambiguous (now 398 / 398).  Full write-up: [`docs/REAL_ID_ROW_SHIFT.md`](docs/REAL_ID_ROW_SHIFT.md) |
 | **T7** | **No R code exists anywhere in the archive** | the paper is Python-only: Python 3.9 with scikit-learn, statsmodels, PyRadiomics, SimpleITK |
-| **T8** | The 27-feature model cannot be rebuilt from the shipped habitat tables | see F8 in §4 |
+| **T8** | The 25-feature model cannot be rebuilt from the shipped habitat tables | see F8 in §4 |
 | **T9** | Table S9's Clinical row needs **rank-split** equal-frequency bins | see §5.1 #4 |
 | **T10** | A working copy of the manuscript left in the workspace (`lunwen3/投稿版_Manuscript_FINAL_EN.md`, 2026-10-09) still contains a **superseded "Table 4"** (test cohort 2 DeLong .336, pooled .025) that no longer exists in the submitted manuscript | the submitted main text has **Table 1/2/3 only** and supplementary Tables S1–S21; its Table S5/S10 read **.371** and **.022**.  `src/hrpca/paper.py` parses the submitted documents at run time, and the verifier's source guard fails if a "Table 4" appears |
 | **T11** | `base.csv` is quoted under three different conventions: mean `f(x)` over all 1,009 rows (**−1.3799600**), over the 391-row SHAP subset (**−1.1047250**), or over the 398-patient training cohort from the deployed scores (**−1.1039943**) | `base.csv` stores **−1.1039913 ≈ the 398-patient training cohort** (difference 3 × 10⁻⁶); the mean \|SHAP\| panel likewise uses the 398-patient reference (§5.1 #3, #8) |
@@ -400,13 +405,17 @@ src/00_assemble_data.py         build data/ + MANIFEST.json
 src/01_segmentation.py          nnU-Net gland segmentation
 src/02_habitat_clustering.py    two-level K-means, K selection
 src/03_feature_extraction.py    PyRadiomics + region remapping
-src/04_feature_selection.py     ICC → NZV → collinearity → LASSO
+src/04_feature_selection.py     NZV → collinearity → LASSO
 src/05_model_training.py        signatures, combined model, K comparison
 src/06_validation.py            bootstrap CIs, DeLong, robustness
 src/07_calibration.py           H-L, Cox recalibration, Brier
 src/08_dca.py                   decision curve and clinical terms
 src/09_shap.py                  closed-form SHAP
 src/10_figures.py               all figures
+src/11_habitat_number_selection.py  K selection by repeated nested CV
+src/shap/                       Fig. 5 / Fig. 6 SHAP plots (its own README)
+                                ★ the MRI panels need the source images, which
+                                are not distributed
 verify/check_paper_numbers.py   ★ every published number
 verify/check_id_linkage.py      ★ the identifier key
 verify/check_disputed_items.py  ★ the items disputed during review
@@ -425,6 +434,10 @@ data/synthetic/                 ★ SYNTHETIC data — pipeline demonstration on
 data/*.csv, data/MANIFEST.json  aggregate results and metadata (no patient rows)
 results/                        empty on a clone; generated output
 ```
+
+The SHAP values and force plots can be reproduced from the feature table and the
+published coefficients; the MRI panels in Fig. 6 require the source images, which
+are not distributed.
 
 ---
 
@@ -445,3 +458,43 @@ see §4.
 points produce — they are the direct evidence that the code reproduces the
 published numbers, and are therefore committed rather than generated on demand.
 `results/figures/` is regenerated by `src/10_figures.py`.
+
+---
+
+## 11 · Environment variables
+
+No absolute path is hard-coded.  Every path that used to be baked into the code or
+into `config/config.yaml` now comes from an environment variable.  Copy
+`.env.example` to `.env` (or export the variables in your shell) and fill in the
+paths that exist on your machine.
+
+**Unset variables cause the corresponding verifier to exit 3 (fail-closed), which
+is intended.**  A check that cannot reach its inputs must never report PASS:
+`verify/scan_identifiers.py --gate` fails outright without `HRPCA_ID_MAP`, and
+`verify/check_online_vs_paper.py` exits 3 without `HRPCA_ONLINE_DIR`,
+`HRPCA_MANUSCRIPT` and `HRPCA_SUPPLEMENT`.
+
+| Variable | Consumed by | Purpose | Example |
+|---|---|---|---|
+| `HRPCA_ONLINE_DIR` | `src/hrpca/online.py`, `verify/check_online_vs_paper.py` | directory holding the online-data CSVs | `/data/submission/15_online_data` |
+| `HRPCA_MANUSCRIPT` | `src/hrpca/paper.py` | submitted main-text markdown | `/data/submission/Manuscript_FINAL.md` |
+| `HRPCA_SUPPLEMENT` | `src/hrpca/paper.py` | submitted supplement markdown | `/data/submission/Supplementary_Material.md` |
+| `HRPCA_ARCHIVE_ROOT` | `verify/check_paper_numbers.py`, `verify/check_disputed_items.py`, `verify/check_id_linkage.py` | working-archive root (`code_repository/derived_data`, `SHAP_output/`) | `/data/archive` |
+| `HRPCA_CLINIC_CSV` | `tools/build_id_map.py`, `tools/pseudonymise_repo.py` | authoritative clinical table | `/data/archive/Clinic.csv` |
+| `HRPCA_CONTROLLED_DIR` | `tools/make_synthetic_data.py` | controlled individual-level store | `/data/controlled/repo_data` |
+| `HRPCA_ID_MAP` | `src/hrpca/pseudonym.py`, `src/hrpca/sanitise.py`, `verify/scan_identifiers.py` | JSON map: hospital number → study code | `/data/controlled/id_map.json` |
+| `HRPCA_ID_MAP_DIR` | `src/hrpca/pseudonym.py`, `tools/build_id_map.py` | directory holding the mapping files | `/data/controlled` |
+| `HRPCA_DEPLOY_ROOT` | `config/config.yaml` (`${HRPCA_DEPLOY_ROOT}/…`) | deployment working directory | `/data/deploy` |
+| `HRPCA_SOL21_K5` | `config/config.yaml` | K = 5 habitat run | `/data/deploy/sol21_k5` |
+| `HRPCA_SOL21_K4` | `config/config.yaml` | K = 4 replication run | `/data/archive/sol21_k4` |
+| `HRPCA_SOL21_K7` | `config/config.yaml` | K = 7 replication run | `/data/archive/sol21_k7` |
+
+`config/config.yaml` accepts `${VAR}` placeholders, expanded by
+`hrpca.load_config()`.  An unset variable expands to the empty string **and the
+separator that follows it is dropped**, so `${HRPCA_DEPLOY_ROOT}/label.csv`
+becomes `label.csv`, not `/label.csv`.
+
+The SHAP figure scripts under `src/shap/` use their own set — `HRPCA_SHAP_FEATURES`,
+`HRPCA_SHAP_LABELS`, `HRPCA_SHAP_CLINIC`, `HRPCA_SHAP_MODELS`,
+`HRPCA_SHAP_RESULTS`, `HRPCA_SHAP_OUT`, `HRPCA_SHAP_CASES`, `HRPCA_SHAP_MRI` and
+`HRPCA_SHAP_EXPORT` — each documented in `src/shap/README.md`.

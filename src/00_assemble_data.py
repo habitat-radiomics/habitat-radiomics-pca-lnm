@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Step 0 — assemble the published input tables into ``data/``.
 
@@ -240,7 +240,7 @@ def main() -> int:
     clinical = pd.read_csv(P["data"] / "clinical.csv", encoding="utf-8-sig")
     # normalise the column names once, so that no downstream script depends on
     # the original spacing / hyphenation.  Both builds are handled:
-    #   C:/O/Clinic.csv              volume_tumor, volume_prostate
+    #   <archive>/Clinic.csv              volume_tumor, volume_prostate
     #   lunwen3/Clinic.csv           volume_tumor, "prostate volume"
     clinical = clinical.rename(columns={
         "PI-RADS": "PI_RADS",
@@ -389,7 +389,7 @@ def main() -> int:
         ("h2h4_final/meta_all.csv", "closed-form SHAP inputs, final combined model"),
         ("h2h4_final/base.csv", "baseline E[f(X)] = -1.1039913"),
         ("h2h4_fusion/fusion_probs_all.csv", "per-model probabilities (20 digits)"),
-        ("SHAP_k5_feature_stats.csv", "27 retained features: RF importance and mean|SHAP|"),
+        ("SHAP_k5_feature_stats.csv", "Table S14: RF-ranked features (27 rows), with mean|SHAP|"),
         ("h2_h4_shap/SHAP_H2_ranking.csv", "H2 feature ranking"),
         ("h2_h4_shap/SHAP_H4_ranking.csv", "H4 feature ranking"),
         ("total_shap/SHAP_habitat_share_train.csv", "habitat share of total mean|SHAP|"),

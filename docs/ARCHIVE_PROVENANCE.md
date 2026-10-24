@@ -1,8 +1,8 @@
-# 三条争议项 —— 归档溯源后的最终结论（第 3 版）
+﻿# 三条争议项 —— 归档溯源后的最终结论（第 3 版）
 
 **日期**：2026-10-16
 **方法**：按用户要求放弃"重拟合即复现"，改为**在归档里找当年生成表格的原始脚本与产物**；
-论文值一律在运行时从投稿稿解析（`src/hrpca/paper.py`）；`C:\O\投稿（压缩）` 全程只读。
+论文值一律在运行时从投稿稿解析（`src/hrpca/paper.py`）；`<submission-package>` 全程只读。
 
 ---
 
@@ -12,14 +12,14 @@
 
 | 文件 | 行数 | 时间 | 训练队列 | 完整病例 | 多因素 PI-RADS OR | ISUP 合计 |
 |---|---|---|---|---|---|---|
-| **`C:\O\Clinic.csv`** ✅ **权威** | **1016** | 2026-10-06 | 398 | **377** | **1.6114** | **391**（缺 7） |
+| **`<archive>/Clinic.csv`** ✅ **权威** | **1016** | 2026-10-06 | 398 | **377** | **1.6114** | **391**（缺 7） |
 | `lunwen3\Clinic.csv` ❌ 我误用 | 1097 | 2026-09-03 | 395 | 374 | 1.5653 | 398（无缺失） |
 | `lunwen3\sol21…\Clinic.csv` | 1025 | 2026-09-11 | 398 | 377 | 1.6114 | 391 |
 
-权威数据源索引第 39 行早已写明 **Table 1 的权威源是 `C:\O\Clinic.csv`**；
+权威数据源索引第 39 行早已写明 **Table 1 的权威源是 `<archive>/Clinic.csv`**；
 我却用了 workspace 的 1097 行版本（该文件是**更晚的构建**，不是当年的分析表）。
 
-**用权威源 `C:\O\Clinic.csv` 后：**
+**用权威源 `<archive>/Clinic.csv` 后：**
 
 ```
 Table S15  14 格中 14 格吻合，n = 377 ✅
@@ -74,7 +74,7 @@ scripts/_cases_with_ids.csv   ──(real_id)──►  Clinic.csv / label.csv /
 | 前瞻 | `S0758` / `S0771` / `S0783` | 0 / 0 / 1 |
 
 说明：这 11 例是相对 **`lunwen3\Clinic.csv`（1097 行）** 而言；改用权威源
-**`C:\O\Clinic.csv`（1016 行，恰与分析集同集）后，无缺失临床记录的病例为 0 例**，
+**`<archive>/Clinic.csv`（1016 行，恰与分析集同集）后，无缺失临床记录的病例为 0 例**，
 训练队列正好 398 例。**故你"未发现 3 例无临床记录"是正确的。**
 
 ---
@@ -84,7 +84,7 @@ scripts/_cases_with_ids.csv   ──(real_id)──►  Clinic.csv / label.csv /
 | 项 | 内容 |
 |---|---|
 | **论文位置** | 补充材料 `## **Table S15. Univariable and multivariable logistic regression for pN1 (training cohort, n = 377 with complete data)**`（7 行变量） |
-| **依据文件** | **`C:\O\Clinic.csv`**（1016 行）+ `C:\Users\l\Desktop\lunwen3\label.csv`（`group == 'train'`） |
+| **依据文件** | **`<archive>/Clinic.csv`**（1016 行）+ `<deploy-root>/label.csv`（`group == 'train'`） |
 | **ID 连接方式** | **`label.csv.ID` 去掉 `.nii.gz` ←→ `Clinic.csv.ID`（纯数字）**，`how="inner"` → **n = 398**；再对 7 个变量 `dropna()` |
 | **复算值** | **n = 377**；缺失 ISUP **7**、PSA **15**、PSAD **15**；**ISUP 与 PSA 同时缺失 1 例** |
 | **是否建议改** | ❌ **不改** —— 14 格全部逐位吻合 |
@@ -133,7 +133,7 @@ scripts/_cases_with_ids.csv   ──(real_id)──►  Clinic.csv / label.csv /
 
 | 类型 | 路径 | 说明 |
 |---|---|---|
-| **原始脚本** | `C:\O\_完整备份_20261011_001849\01_工作目录\scripts\univariable_check.py` | 内嵌 `HAND_UNI` / `HAND_MUL` 即论文值；含"各自可用例数 vs 377 完整病例"两种口径对照 |
+| **原始脚本** | `<archive>/_backup/01_workspace\scripts\univariable_check.py` | 内嵌 `HAND_UNI` / `HAND_MUL` 即论文值；含"各自可用例数 vs 377 完整病例"两种口径对照 |
 | 原始脚本 | `…\scripts\uni_multi_from_fuben.py` | 从 `- 副本\Clinic.csv` 生成 Table S15 的 Markdown；输出到 `lunwen3\数据与图_导出\data\tableS16_from_fuben.md` |
 | 原始脚本 | `…\scripts\recompute_uni_multi.py` | 用 `lunwen3\Clinic.csv` 复算，输出 `results\recompute_univariate.csv` / `recompute_multivariate.csv` |
 | **产物** | `…\01_工作目录\results\recompute_univariate.csv`（2026-08-20） | Age 0.998 / PI_RADS **1.565** / ISUP 1.895 / PSAD 1.111 → 正是 **1097 行版**的输出 |
@@ -141,7 +141,7 @@ scripts/_cases_with_ids.csv   ──(real_id)──►  Clinic.csv / label.csv /
 
 > **重要**：归档里那份 `recompute_univariate.csv` 的 PI_RADS = **1.565**，
 > 与我用 `lunwen3\Clinic.csv` 复算的 **1.5653** 一致 —— 这证明
-> **1097 行版是更晚出现的**，终稿的 1.611 来自 **`C:\O\Clinic.csv`**。
+> **1097 行版是更晚出现的**，终稿的 1.611 来自 **`<archive>/Clinic.csv`**。
 
 ---
 
@@ -150,14 +150,14 @@ scripts/_cases_with_ids.csv   ──(real_id)──►  Clinic.csv / label.csv /
 | 项 | 内容 |
 |---|---|
 | **论文位置** | 补充材料 `## **Table S9. Calibration details by cohort**`，行名 `Clinical (ISUP + PI-RADS)`；四格 `0.012 / 0.0004 / 0.091 / 0.380` |
-| **依据文件（分数列）** | `C:\O\_完整备份_20261011_001849\01_工作目录\code_repository\derived_data\<cohort>_scores_label.csv` 的 **`Clinic`** 列（部署分数；与 `lunwen3\code_repository\derived_data` 的同一批文件） |
+| **依据文件（分数列）** | `<archive>/_backup/01_workspace\code_repository\derived_data\<cohort>_scores_label.csv` 的 **`Clinic`** 列（部署分数；与 `lunwen3\code_repository\derived_data` 的同一批文件） |
 | **ID 连接方式** | **不需要连接** —— H-L 在同一队列内逐患者计算（只用本队列 `label` + 本列分数） |
 | **H-L 分箱方式** | **10 等频分箱**（deciles of predicted risk）；**按分数排序后按秩切分成 10 组**（并列值按排序位置切分，非 `qcut`） |
 | **自由度** | **df = 组数 − 2 = 8** |
 | **统计量** | `sum (O−E)² / (E (1 − E/n))`，卡方尾概率 |
 | **复算值** | **0.0124 / 0.0004 / 0.0911 / 0.3801** → 即论文 **0.012 / 0.0004 / 0.091 / 0.380** |
 | **是否建议改** | ❌ **不改** |
-| **归档是否找到原始产物** | ✅ **找到脚本，且正在用**：`C:\Users\l\Desktop\lunwen3\scripts\compute_hl_clinical.py`（`hl()` 即上述口径） |
+| **归档是否找到原始产物** | ✅ **找到脚本，且正在用**：`<deploy-root>/scripts\compute_hl_clinical.py`（`hl()` 即上述口径） |
 
 ### 归档脚本的运行记录（本次实跑）
 
@@ -176,7 +176,7 @@ $ python scripts\compute_hl_clinical.py
 
 ### 该行是当年专门改过的（有据）
 
-`C:\Users\l\Desktop\lunwen3\scripts\fix_S9_clinical.py` 第 26–29、45–46 行：
+`<deploy-root>/scripts\fix_S9_clinical.py` 第 26–29、45–46 行：
 
 ```python
 # Clinical 行的四格：0.011 | 0.001 | 0.114 | 0.224 → 0.012 | 0.0004 | 0.091 | 0.380
@@ -250,18 +250,18 @@ python verify/check_paper_numbers.py
 ## ⑥ 版本陷阱清单（终版）—— 每条都曾真实导致误判
 
 > **总规则**：动手核任何数字之前，**先读《权威数据源索引》**；
-> **绝不使用工作区（`C:\Users\l\Desktop\lunwen3`）里的同名文件代替权威源。**
+> **绝不使用工作区（`<deploy-root>`）里的同名文件代替权威源。**
 
 | # | 陷阱 | 症状 | 正确来源 / 正确做法 |
 |---|---|---|---|
-| **T1** ★ | **临床表有两个版本** | 用 `lunwen3\Clinic.csv`（1097 行，2026-09-03）→ 训练队列 **395**、完整病例 **374**、PI-RADS 多因素 OR **1.5653**、ISUP 合计 **398**（**四项全错**） | **`C:\O\Clinic.csv`（1016 行，2026-10-06）** → 训练 **398**、完整病例 **377**、PI-RADS OR **1.611**、ISUP 13/61/76/104/137 = **391**（缺 7，与脚注一致）。已写入 `config/config.yaml: clinic_csv` |
+| **T1** ★ | **临床表有两个版本** | 用 `lunwen3\Clinic.csv`（1097 行，2026-09-03）→ 训练队列 **395**、完整病例 **374**、PI-RADS 多因素 OR **1.5653**、ISUP 合计 **398**（**四项全错**） | **`<archive>/Clinic.csv`（1016 行，2026-10-06）** → 训练 **398**、完整病例 **377**、PI-RADS OR **1.611**、ISUP 13/61/76/104/137 = **391**（缺 7，与脚注一致）。已写入 `config/config.yaml: clinic_csv` |
 | **T2** | **分数文件可能被舍入** | `derived_data\train_scores_label.csv` 的 `Clinic` 列只有 2 位小数 → 训练 AUC 0.7041（真值 0.7064）；All-habitat 0.8632（真值 0.8639→**0.864**） | 训练队列 AUC **必须**用未舍入源 `data/scores_highprec.csv`；**例外**：`Combined` 列在该高精度导出里是**旧版模型**（0.795），须用 `data/scores/train.csv`（0.798） |
 | **T3** | **`sol21*` 存在 `- 副本` 旧版** | 旧版是 4 变量 nomogram（PI_RADS/ISUP/H2/H4），Combined 训练 AUC 0.795 | **凡路径含 `副本` / `_deprecated` / `_deleted` / `回退镜像` 一律禁用** |
 | **T4** | **生境画像有旧导出** | `数据与图_导出\data\HabitatProfiles_4cohort*.csv`（2026-09-11）的均值与 z 分数（ddof=1）与现行 Table S2 不符 | 一律由 `data/features/rad_features_h*.csv` 重算，z 分数用 **ddof = 0** |
 | **T5** ★ | **分数文件没有 ID** | `*_scores_label.csv` 只有 `patient_index`；四队列行序互不相同 → **按行位次连接，test1 只有 36/339 正确、test2 只有 14/189** | 正确链路见 §①：`scores_label.csv ─(patient_index)→ _cases_with_ids.csv ─(real_id)→ Clinic.csv / label.csv`。**严禁按位次配对** |
 | **T6** ★ | **连接键在训练队列失灵** | `_cases_with_ids.csv` 的 `real_id` 指纹检验：test1 **339/339**、test2 **189/189**（r=1.0000），但**训练队列 0/398** | 训练队列改用 `data/model_inputs.csv`（= `heatmap_data_all.csv`）或 `data/fullprec_scores.csv`（两者在 1016 例上**逐位相同**） |
 | **T7** | **归档无 R 代码** | 论文旧稿曾写"R 4.2 for DeLong and calibration" | 全库 Python：**Python 3.9** + scikit-learn / statsmodels / PyRadiomics 3.0.1 / SimpleITK 2.1.1；论文已改为"no other software package was used" |
-| **T8** ★ | **发布的生境特征表不是建模所用矩阵** | 用 `rad_features_h*.csv` 的 27 特征重拟合 → 训练 AUC **0.745–0.756**；归档系数 → **0.700**；均非 **0.864** | 冻结分数（`data/scores/`）给出 0.864。**须在数据可获得性里如实写明**（README §4 F8） |
+| **T8** ★ | **发布的生境特征表不是建模所用矩阵** | 用 `rad_features_h*.csv` 的 25 特征重拟合 → 训练 AUC **0.745–0.756**；归档系数 → **0.700**；均非 **0.864** | 冻结分数（`data/scores/`）给出 0.864。**须在数据可获得性里如实写明**（README §4 F8） |
 | **T9** | **H-L 分箱口径会改变结论** | Table S9 的 `Clinical` 行用 `qcut` → 0.0343/0.0007/0.0350/0.1162（论文是 .012/.0004/.091/.380） | Table S9 的 Clinical 行用 **10 等频「按秩切分」**（`metrics.hosmer_lemeshow_rank`），**df = 8**；habitat 行用归档 `hosmer_all.csv`；Combined 行用 `qcut`。三者均已在核验脚本中固定 |
 | **T10** | **工作区留有旧稿** | `lunwen3\投稿版_Manuscript_FINAL_EN.md`（2026-10-09）含**已被删除的 "Table 4"**（test2 DeLong .336、pooled .025） | 投稿正文只有 **Table 1/2/3**，补充材料 S1–S21；Table S5/S10 现为 **.371 / .022**。`src/hrpca/paper.py` **运行时**解析投稿稿；核验脚本带 **source guard**，若正文出现 "Table 4" 即 FAIL |
 | **T11** | **`base.csv` 的口径** | 三种算法给三个值：全 1009 行 **−1.3799600** / 391 行 **−1.1047250** / 398 例训练队列（部署分数）**−1.1039943** | `base.csv` 存的是 **−1.1039913 ≈ 398 例训练队列**（差 3×10⁻⁶）；Fig. S9 的 mean\|SHAP\| 也用 398 例为基准 |
@@ -279,7 +279,7 @@ python verify/check_paper_numbers.py
 | 范围 | **1125** 个唯一住院号 → `S0001`…`S1125` |
 | 替换处 | **28 个文件 / 29 785 个值**（`data/`、`data/features/`、`data/shap/`、`data/k_runs/`） |
 | 规则 | 按数值升序编号（确定性，可用来源文件重建） |
-| 映射表位置 | `C:\Users\l\Desktop\lunwen3\00_备份_ID映射_禁传\`（**仓库外**，含 `!!_禁传_README.md`） |
+| 映射表位置 | `<controlled-store>/id_map\`（**仓库外**，含 `!!_CONTROLLED_README.md`） |
 | 指纹 | sha256 = `2ed1371747c5ca52c515b12a139c0f01f69a3829f438522f7eefe9f33291e7e5` |
 | 代码改动 | `src/hrpca/pseudonym.py`（新）、`src/hrpca/sanitise.py`（新）、`src/00_assemble_data.py`（装配末尾统一替换，幂等）、`verify/scan_identifiers.py`（新，门禁）、`src/hrpca/gold.py`、`verify/check_paper_numbers.py`、`src/09_shap.py`、`verify/check_id_linkage.py` 的示例号 |
 | 门禁 | `python verify/scan_identifiers.py --gate`；fail closed；注入法验证有效 |
@@ -304,7 +304,7 @@ python verify/check_paper_numbers.py
 | 范围 | **1125** 个唯一住院号 → `S0001`…`S1125` |
 | 替换处 | **28 个文件 / 29 785 个值**（`data/`、`data/features/`、`data/shap/`、`data/k_runs/`） |
 | 规则 | 按数值升序编号（确定性，可用来源文件重建） |
-| 映射表位置 | `C:\Users\l\Desktop\lunwen3\00_备份_ID映射_禁传\`（**仓库外**，含 `!!_禁传_README.md`） |
+| 映射表位置 | `<controlled-store>/id_map\`（**仓库外**，含 `!!_CONTROLLED_README.md`） |
 | 指纹 | sha256 = `2ed1371747c5ca52c515b12a139c0f01f69a3829f438522f7eefe9f33291e7e5` |
 | 数值零改动 | 与**未改动的归档原件**逐格比对：4 张特征表（含 20 MB 级）数值列一致 = True |
 | 门禁 | `python verify/scan_identifiers.py --gate`；fail closed；注入法验证有效 |
@@ -313,10 +313,10 @@ python verify/check_paper_numbers.py
 
 | 用途 | 路径 | 说明 |
 |---|---|---|
-| **Table S15 原始脚本** | `C:\O\_完整备份_20261011_001849\01_工作目录\scripts\univariable_check.py` | 内嵌 `HAND_UNI`/`HAND_MUL` 即论文值；含"各自可用例数 vs 377 完整病例"两口径 |
+| **Table S15 原始脚本** | `<archive>/_backup/01_workspace\scripts\univariable_check.py` | 内嵌 `HAND_UNI`/`HAND_MUL` 即论文值；含"各自可用例数 vs 377 完整病例"两口径 |
 | Table S15 生成器 | `…\scripts\uni_multi_from_fuben.py` | 从 `- 副本\Clinic.csv` 生成 Markdown |
 | Table S15 对照产物 | `…\results\recompute_univariate.csv`（2026-08-20） | PI_RADS **1.565** → 证明 **1097 行版是更晚的构建** |
-| **Table S9 Clinical 行脚本** | `C:\Users\l\Desktop\lunwen3\scripts\compute_hl_clinical.py` | `hl()` = **排序后按秩切分 10 箱**；本轮实跑得 0.0124/0.0004/0.0911/0.3801 |
-| Table S9 行修订记录 | `C:\Users\l\Desktop\lunwen3\scripts\fix_S9_clinical.py` | 记录当年把 `.011/.001/.114/.224` → **`.012/.0004/.091/.380`**，并把"10 equal-frequency bins … 8 degrees of freedom"写进表注 |
+| **Table S9 Clinical 行脚本** | `<deploy-root>/scripts\compute_hl_clinical.py` | `hl()` = **排序后按秩切分 10 箱**；本轮实跑得 0.0124/0.0004/0.0911/0.3801 |
+| Table S9 行修订记录 | `<deploy-root>/scripts\fix_S9_clinical.py` | 记录当年把 `.011/.001/.114/.224` → **`.012/.0004/.091/.380`**，并把"10 equal-frequency bins … 8 degrees of freedom"写进表注 |
 | DeLong 原始导出 | `…\code_repository\derived_data\<cohort>_Delong.csv` | 与部署分数复算在 **16/16** 格一致（含 test2 = 0.371131） |
 | H-L 原始导出 | `…\code_repository\derived_data\hosmer_all.csv` | Table S9 生境 20 格的来源 |

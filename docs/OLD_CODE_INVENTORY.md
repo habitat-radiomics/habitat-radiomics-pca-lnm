@@ -1,8 +1,8 @@
-# 步骤 2 · 旧代码清点（部署版 vs 旧版）
+﻿# 步骤 2 · 旧代码清点（部署版 vs 旧版）
 
 **清点日期**：2026-10-16
 **目的**：上传 GitHub 前，逐个文件标出「部署版 ✓（可用）」与「旧版 ✗（禁用）」，并给出真实路径。
-**依据**：`C:\O\投稿（压缩）\10_投稿清单\权威数据源索引.md` + `开工须知_代码库重写.md` 第三节。
+**依据**：`<submission-package>\10_投稿清单\权威数据源索引.md` + `开工须知_代码库重写.md` 第三节。
 
 ---
 
@@ -10,16 +10,16 @@
 
 | 目录 | 判定 | 理由 |
 |---|---|---|
-| `C:\Users\l\Desktop\lunwen3\` | ✅ **部署版根**（现行分析目录） | 「开工须知」指定的脚本目录（`scripts\`）+ `figures_submission\` + `code_repository\derived_data` 均在此；`SHAP_output\` 高精度数据在此 |
-| `C:\Users\l\Desktop\lunwen3\code_repository\` | ✅ **部署版代码库**（将被重写取代） | `derived_data\metrics_all.csv` 与论文 Table 2 完全一致（32/32 AUC 已复核，见下） |
-| `C:\O\_完整备份_20261011_001849\01_工作目录\` | ✅ 同上内容的完整备份（只读参照） | 与 lunwen3 同源；`SHAP_output`、`sol21`、`results` 齐备 |
-| `C:\O\sol21. 生境分析-(多)单中心-不同区域对比-临床 - 副本` | ❌ **旧版** | 4 变量 nomogram（PI_RADS/ISUP/H2/H4）；Combined 训练 AUC 0.795 ✗（论文 0.798） |
-| `C:\O\sol7. 传统组学-多中心-多模态 - 模态对比 -临床` | ⚠️ **旧版（仅 WTR 行参照）** | nomogram 仅 ISUP+ADC；Table S6 最终值需注明口径 |
-| `C:\O\xxx\sol21…` | ❌ 旧版 | 第 4 个时期快照，行数不同 |
-| `C:\O\K4\`、`C:\O\K7\` | ✅ **K=4 / K=7 专用复现目录** | Table 3 / S3b 的权威源（各自 `figdata`） |
-| `C:\O\深度学习建模\sol12_DL*` | ✅ DL 比较器（`_18` 为部署配置） | Table S19 / S2x |
-| `C:\O\_完整备份_20261011_001849\04_回退镜像\` | ❌ 回退镜像 | 含旧版；仅作灾难恢复 |
-| `C:\O\1Data\` | ✅ 原始影像（ADC/DWI/T2WI/crop/clu） | 不可公开 |
+| `<deploy-root>\` | ✅ **部署版根**（现行分析目录） | 「开工须知」指定的脚本目录（`scripts\`）+ `figures_submission\` + `code_repository\derived_data` 均在此；`SHAP_output\` 高精度数据在此 |
+| `<deploy-root>\code_repository\` | ✅ **部署版代码库**（将被重写取代） | `derived_data\metrics_all.csv` 与论文 Table 2 完全一致（32/32 AUC 已复核，见下） |
+| `<archive>/_backup/01_workspace\` | ✅ 同上内容的完整备份（只读参照） | 与 lunwen3 同源；`SHAP_output`、`sol21`、`results` 齐备 |
+| `<archive>/sol21-copy` | ❌ **旧版** | 4 变量 nomogram（PI_RADS/ISUP/H2/H4）；Combined 训练 AUC 0.795 ✗（论文 0.798） |
+| `<archive>/sol7` | ⚠️ **旧版（仅 WTR 行参照）** | nomogram 仅 ISUP+ADC；Table S6 最终值需注明口径 |
+| `<archive>/xxx\sol21…` | ❌ 旧版 | 第 4 个时期快照，行数不同 |
+| `<archive>/K4\`、`<archive>/K7\` | ✅ **K=4 / K=7 专用复现目录** | Table 3 / S3b 的权威源（各自 `figdata`） |
+| `<archive>/deep-learning\sol12_DL*` | ✅ DL 比较器（`_18` 为部署配置） | Table S19 / S2x |
+| `<archive>/_backup/04_rollback\` | ❌ 回退镜像 | 含旧版；仅作灾难恢复 |
+| `<archive>/1Data\` | ✅ 原始影像（ADC/DWI/T2WI/crop/clu） | 不可公开 |
 
 ---
 
@@ -30,11 +30,11 @@
 | 脚本 | 判定 | 说明 / 真实数据源 |
 |---|---|---|
 | `recompute_tableS2_habitat_profiles.py` | ⚠️ **逻辑可用、路径是旧版** | 第 6 行指向 `sol21…- 副本`（❌旧版）→ 必须改指 **部署版 features**。且脚本内 `PUB`（论文期望值）为 2026-10-14 之前的旧值（Signal mean H1 3.134 等），与现行 Table S2（3.113/2.848/10.944）**不一致** ✗ → 以**重算值**为准 |
-| `recompute_K_new.py` | ✅ 逻辑可用 | K=4/5/7 外部泛化；需指向 `C:\O\K4`、`C:\O\K7`、部署版 `figdata` |
+| `recompute_K_new.py` | ✅ 逻辑可用 | K=4/5/7 外部泛化；需指向 `<archive>/K4`、`<archive>/K7`、部署版 `figdata` |
 | `recalibration_dca.py` | ✅ 逻辑可用（Table S9/S13/S17 口径） | 用 `*_scores_label.csv`（2 位小数）；H-L = 10 等频分箱，dof = 箱数−2；Cox 重校准 = 队列内 logit 逻辑回归 |
 | `sens_52_corrected.py` | ✅ 逻辑可用（Table S18/S20） | 52 例手工修正清单内嵌；注意用**冻结模型**与**重拟合**两种口径 |
 | `compare_clinical_comparators.py` | ⚠️ 路径是旧版 | 参考 `sol21…\data\clinical.csv`（含插补 ✗）→ 改为 `Clinic.csv` + `label.csv` |
-| `rebuild_27feature_model.py` | ✅ 逻辑可用（Table S14 / 0.864 复核） | 27 特征 LASSO 重建 |
+| `rebuild_27feature_model.py` | ✅ 逻辑可用（Table S14 / 0.864 复核） | 25 特征 LASSO 重建 |
 | `verify_tableS14_retained_features.py` | ✅ | 保留特征 5/7/7/5/3 生境分布 |
 | `field_strength_subgroup.py` / `_bootstrap.py` | ✅ | Table 4 / Table 5 场强亚组（1.5T 0.849 n=45 vs 3.0T 0.852 n=562, P=0.980） |
 | `extract_dicom_acquisition_params.py`、`scanner_census.py`、`map_patients_to_scanners.py`、`scanner_inventory_by_cohort.py` | ✅ | Table S1（29 型号 / 4 厂商；仁济 580、安医前瞻 51） |
@@ -106,7 +106,7 @@
 ### 唯一权威连接键
 
 ```
-C:\Users\l\Desktop\lunwen3\scripts\_cases_with_ids.csv          （1,016 行）
+<deploy-root>/scripts\_cases_with_ids.csv          （1,016 行）
   patient_index, label, Clinic, Habitat, HabitatH1..H5, Combined,
   real_id, cohort, ck, s_HabitatH2, s_HabitatH4, dom, margin
 ```

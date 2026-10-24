@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """★★★ One-command verification of every number in the paper.
 
@@ -18,6 +18,8 @@ derived from the released derived data; those are listed in
 Exit status is 0 when there is no FAIL, 1 otherwise.
 """
 from __future__ import annotations
+
+import os
 
 import argparse
 import sys
@@ -405,10 +407,10 @@ def s_table_s2(ctx, verbose):
 
 
 # ==========================================================================
-# 8. Table S14 — 27 retained features
+# 8. Table S14 — RF-ranked features (27 rows)
 # ==========================================================================
 def s_table_s14(ctx, verbose):
-    banner("Section 8 · Table S14 — 27 retained habitat features")
+    banner("Section 8 · Table S14 — RF-ranked habitat features (27 rows)")
     f = ctx.P["data"] / "shap" / "SHAP_k5_feature_stats.csv"
     if not f.exists():
         check("table_s14", "feature stats", "present", "missing", verdict="SKIP")
@@ -512,7 +514,7 @@ def s_delong(ctx, verbose):
         check("delong_Table S12b", f"{key} · P", G.TABLE_S12B[key]["p"], p, tol=0.02)
 
     # the pipeline's own exports are an independent second source
-    arch = Path(r"C:\Users\l\Desktop\lunwen3\code_repository\derived_data")
+    arch = Path(os.environ.get("HRPCA_ARCHIVE_ROOT", "")) / "code_repository" / "derived_data"
     if arch.exists():
         for c in COHORTS:
             f = arch / f"{c}_Delong.csv"
@@ -613,7 +615,7 @@ def s_calibration(ctx, verbose):
     # df = bins - 2 = 8.  pandas.qcut gives different numbers for the clinical
     # row because that column contains many ties.
     pub9 = PP.table_s9_calibration()
-    arch = Path(r"C:\Users\l\Desktop\lunwen3\code_repository\derived_data")
+    arch = Path(os.environ.get("HRPCA_ARCHIVE_ROOT", "")) / "code_repository" / "derived_data"
     pipe = None
     if (arch / "hosmer_all.csv").exists():
         pipe = pd.read_csv(arch / "hosmer_all.csv", encoding="utf-8-sig").set_index("Cohort")
@@ -785,7 +787,7 @@ def s_regression(ctx, verbose):
 def s_table1(ctx, verbose):
     banner("Section 17 · Table 1 — baseline characteristics")
     # ★ Table 1's ISUP / PI-RADS rows and the continuous medians come from
-    #   C:/O/Clinic.csv joined to label.csv on the numeric ID.  That build has
+    #   <archive>/Clinic.csv joined to label.csv on the numeric ID.  That build has
     #   exactly 7 training patients without ISUP grade group, matching the
     #   footnote, and reproduces all 34 cells.  Do NOT use the heatmap export's
     #   ISUP column: it fills all 398 patients and gives 83 for grade 3.
@@ -1086,7 +1088,7 @@ def main() -> int:
         return 3
 
     # ---- preflight: is the submitted supplement complete? ----------------
-    # Published values are parsed live from C:/O/投稿（压缩）/.  If that tree is
+    # Published values are parsed live from <submission-package>/.  If that tree is
     # mid-rebuild we must say so, rather than reporting a numerical failure.
     _ok, _missing = PP.preflight()
     if not _ok:
@@ -1094,7 +1096,7 @@ def main() -> int:
         print("  PRECHECK FAILED — the submitted supplement is incomplete")
         print("=" * 92)
         print(f"  missing {len(_missing)} table(s): {', '.join(_missing)}")
-        print("  C:/O/投稿（压缩）/02_补充材料/Supplementary_Material.md appears to")
+        print("  <submission-package>/02_补充材料/Supplementary_Material.md appears to")
         print("  be mid-rebuild.  This is an ENVIRONMENT problem, not a numerical")
         print("  one.  Re-run once the submission workspace stops changing.")
         print("=" * 92)

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """图 ↔ 表数值对照 —— 图里印出的每一个数字都必须能由其权威表复现。
 
@@ -49,7 +49,7 @@ FIG_DP = {"Fig2_ROC": 3, "Fig3a_calibration": 3, "Fig3a_calibration_hl": 3,
 #: the clinical signature's printed name
 CLIN_LABEL = "Clinical (ISUP + PI-RADS)"
 LEGEND_NAMES = {"Clinic": CLIN_LABEL, "HabitatH2": "Habitat H2", "HabitatH4": "Habitat H4",
-                "Habitat": "All-habitat (27 features)", "Combined": "Combined"}
+                "Habitat": "All-habitat (25 features)", "Combined": "Combined"}
 TITLES = {"train": "Training", "test1": "Test cohort 1", "test2": "Test cohort 2",
           "test_prospective": "Prospective"}
 

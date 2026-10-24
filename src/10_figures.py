@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """10 — figures.
 
@@ -135,7 +135,7 @@ def fig_roc(scores, out: Path):
     fig, axes = plt.subplots(1, 4, figsize=(14, 3.6))
     # label the clinical signature exactly as the paper does
     show = [("Clinic", "Clinical (ISUP + PI-RADS)"), ("HabitatH2", "Habitat H2"),
-            ("HabitatH4", "Habitat H4"), ("Habitat", "All-habitat (27 features)"),
+            ("HabitatH4", "Habitat H4"), ("Habitat", "All-habitat (25 features)"),
             ("Combined", "Combined")]
     for ax, coh in zip(axes, COHORTS):
         d = scores[coh]

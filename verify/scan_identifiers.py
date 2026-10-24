@@ -1,4 +1,4 @@
-"""① 全局标识符排查：仓库内所有数据/文档文件。
+﻿"""① 全局标识符排查：仓库内所有数据/文档文件。
 
 判据（整列 + 整格匹配，避免把特征值的小数误判为 ID）：
   R1  7–10 位纯数字      —— 住院号 / 病案号 / 检查号  ★高
@@ -18,6 +18,8 @@
 不构成推送风险）；若不在 git 仓库内则退化为扫描全部。
 """
 from __future__ import annotations
+
+import os
 
 import argparse
 import csv
@@ -113,7 +115,7 @@ CODE_EXT = (".py",)
 BINARY_EXT = (".png", ".pdf", ".jpg", ".svg", ".docx", ".xlsx", ".zip", ".gz")
 
 #: the out-of-repo map: its keys ARE the direct identifiers we must not ship
-MAP_JSON = Path(r"C:\Users\l\Desktop\lunwen3\00_备份_ID映射_禁传\id_map_禁传.json")
+MAP_JSON = Path(os.environ.get("HRPCA_ID_MAP", ""))
 
 
 def load_known_ids() -> set:

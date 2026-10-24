@@ -1,4 +1,4 @@
-# The `real_id` training-cohort row shift
+﻿# The `real_id` training-cohort row shift
 
 **Status: fixed.**  Found 2026-10-17, during a review query about the deep-learning
 comparator.  Affects only analyses that traversed the `real_id` bridge; **no
@@ -107,7 +107,7 @@ changes 362 of 1,016 rows, and running it again changes nothing.
 | Affected | Not affected |
 |---|---|
 | the supplementary `Clinical + all-habitat` models that read `H2`/`H4` off the score files, and the `B (H2 + H4 only)` model in particular | every published AUC, CI, calibration statistic and decision-curve value — those were computed **within** each score file, where the label column is self-consistent |
-| any analysis that joined score rows to `Clinic.csv` / `label.csv` / `model_inputs.csv` through `real_id` | `A1`/`A2`/`A3`, which use the 27 habitat features and the two clinical variables, all keyed by study code and never touching `real_id` |
+| any analysis that joined score rows to `Clinic.csv` / `label.csv` / `model_inputs.csv` through `real_id` | `A1`/`A2`/`A3`, which use the 25 habitat features and the two clinical variables, all keyed by study code and never touching `real_id` |
 | the per-patient prediction export produced before the fix | the `scores/test1`, `scores/test2` joins (already correct) |
 
 **Published numbers are unaffected** because the publication-side pipeline never

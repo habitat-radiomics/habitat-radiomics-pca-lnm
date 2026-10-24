@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """研究专用编号（pseudonymisation of the admission-number key).
 
@@ -14,9 +14,8 @@ This module replaces every such identifier with a study code ``S0001`` …
 tables — sort the identifiers numerically and number them in order — so the same
 inputs always give the same codes and a reviewer can rebuild the table.
 
-The mapping itself is written **outside the repository**
-(``C:\\Users\\l\\Desktop\\lunwen3\\00_备份_ID映射_禁传\\``) and must never be
-committed.
+The mapping itself is written **outside the repository**, to the directory
+named by ``HRPCA_ID_MAP_DIR``, and must never be committed.
 
 Usage
 -----
@@ -26,6 +25,8 @@ Usage
 out-of-repo mapping file exists it is used as a consistency check.
 """
 from __future__ import annotations
+
+import os
 
 import csv
 import io
@@ -44,9 +45,9 @@ ID_CELL = re.compile(r"^\d{7,10}$")
 ID_CELL_SUFFIXED = re.compile(r"^(\d{7,10})(\.nii\.gz)$", re.I)
 
 #: where the (never-committed) mapping lives
-MAP_DIR = Path(r"C:\Users\l\Desktop\lunwen3\00_备份_ID映射_禁传")
-MAP_JSON = MAP_DIR / "id_map_禁传.json"
-MAP_CSV = MAP_DIR / "ID_MAP_禁传.csv"
+MAP_DIR = Path(os.environ.get("HRPCA_ID_MAP_DIR", ""))
+MAP_JSON = Path(os.environ.get("HRPCA_ID_MAP", ""))
+MAP_CSV = MAP_DIR / "ID_MAP.csv"
 
 #: authoritative sources of the identifier universe (repo-relative handled by caller)
 DEFAULT_SOURCES: list = []

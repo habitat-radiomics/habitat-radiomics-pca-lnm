@@ -14,7 +14,7 @@ Two levels of data are relevant:
 * ``data/features/rad_features_h{1..5}.csv`` — the habitat-level tables that
   ship with this repository (n = 1016 per habitat, 1,197 features each).  These
   reproduce **Table S2** (habitat profiles, ``--profiles``) and **Table S14**
-  (the 27 retained features, with the archived feature statistics).
+  (Table S14: features ranked by random-forest importance, 27 rows, with the archived statistics).
 * the *candidate matrix used for feature selection* — built here by
   :func:`build_candidate_matrix`.  Note that the values of that matrix are not
   identical to the shipped tables (the pipeline extracted features on the
@@ -47,21 +47,132 @@ from hrpca import gold as G                                                  # n
 N_HABITATS = 5
 CANDIDATE_FEATURES = 1197
 
+# The three base image types, eight wavelet sub-bands and four LoG scales used by
+# the production run.  These lists reproduce the delivered tables exactly:
+#   Original            105 = 91 non-shape + 14 shape
+#   Wavelet   8 x 91 =  728
+#   LoG       4 x 91 =  364
+#   ---------------------------
+#   total               1,197
+IMAGE_TYPES = ["Original", "Wavelet", "LoG"]
+WAVELET_BANDS = ["LLL", "LLH", "LHL", "LHH", "HLL", "HLH", "HHL", "HHH"]
+LOG_SIGMAS = [2.0, 3.0, 4.0, 5.0]
+
+#: PyRadiomics 3.0.1 feature names per class, transcribed from the delivered
+#: 1,197-column tables so that the expected name universe can be enumerated
+#: without PyRadiomics installed.  ``shape`` is computed on the mask and
+#: therefore exists only for the ``Original`` image type.
+FEATURE_NAMES = {
+    "firstorder": (
+        "10Percentile", "90Percentile", "Energy", "Entropy",
+        "InterquartileRange", "Kurtosis", "Maximum",
+        "MeanAbsoluteDeviation", "Mean", "Median", "Minimum", "Range",
+        "RobustMeanAbsoluteDeviation", "RootMeanSquared", "Skewness",
+        "TotalEnergy", "Uniformity", "Variance",
+    ),
+    "glcm": (
+        "Autocorrelation", "ClusterProminence", "ClusterShade",
+        "ClusterTendency", "Contrast", "Correlation", "DifferenceAverage",
+        "DifferenceEntropy", "DifferenceVariance", "Id", "Idm", "Idmn", "Idn",
+        "Imc1", "Imc2", "InverseVariance", "JointAverage", "JointEnergy",
+        "JointEntropy", "MaximumProbability", "SumEntropy", "SumSquares",
+    ),
+    "glrlm": (
+        "GrayLevelNonUniformityNormalized", "GrayLevelNonUniformity",
+        "GrayLevelVariance", "HighGrayLevelRunEmphasis", "LongRunEmphasis",
+        "LongRunHighGrayLevelEmphasis", "LongRunLowGrayLevelEmphasis",
+        "LowGrayLevelRunEmphasis", "RunEntropy",
+        "RunLengthNonUniformityNormalized", "RunLengthNonUniformity",
+        "RunPercentage", "RunVariance", "ShortRunEmphasis",
+        "ShortRunHighGrayLevelEmphasis", "ShortRunLowGrayLevelEmphasis",
+    ),
+    "glszm": (
+        "GrayLevelNonUniformityNormalized", "GrayLevelNonUniformity",
+        "GrayLevelVariance", "HighGrayLevelZoneEmphasis",
+        "LargeAreaEmphasis", "LargeAreaHighGrayLevelEmphasis",
+        "LargeAreaLowGrayLevelEmphasis", "LowGrayLevelZoneEmphasis",
+        "SizeZoneNonUniformityNormalized", "SizeZoneNonUniformity",
+        "SmallAreaEmphasis", "SmallAreaHighGrayLevelEmphasis",
+        "SmallAreaLowGrayLevelEmphasis", "ZoneEntropy", "ZonePercentage",
+        "ZoneVariance",
+    ),
+    "gldm": (
+        "DependenceEntropy", "DependenceNonUniformityNormalized",
+        "DependenceNonUniformity", "DependenceVariance",
+        "GrayLevelNonUniformity", "GrayLevelVariance",
+        "HighGrayLevelEmphasis", "LargeDependenceEmphasis",
+        "LargeDependenceHighGrayLevelEmphasis",
+        "LargeDependenceLowGrayLevelEmphasis", "LowGrayLevelEmphasis",
+        "SmallDependenceEmphasis", "SmallDependenceHighGrayLevelEmphasis",
+        "SmallDependenceLowGrayLevelEmphasis",
+    ),
+    "ngtdm": ("Busyness", "Coarseness", "Complexity", "Contrast", "Strength"),
+    "shape": (
+        "Elongation", "Flatness", "LeastAxisLength", "MajorAxisLength",
+        "Maximum2DDiameterColumn", "Maximum2DDiameterRow",
+        "Maximum2DDiameterSlice", "Maximum3DDiameter", "MeshVolume",
+        "MinorAxisLength", "Sphericity", "SurfaceArea", "SurfaceVolumeRatio",
+        "VoxelVolume",
+    ),
+}
+
+#: feature classes that exist for every image type (``shape`` does not)
+NON_SHAPE_CLASSES = ("firstorder", "glcm", "glrlm", "glszm", "gldm", "ngtdm")
+
 # The PyRadiomics configuration, following IBSI guidance.
 PYRADIOMICS_SETTINGS = {
-    "binWidth": 25,
-    "resampledPixelSpacing": [1, 1, 1],
+    "binWidth": 5,
+    "resampledPixelSpacing": [2, 2, 2],
     "interpolator": "sitkBSpline",
     "normalize": True,
-    "removeOutliers": 3,
+    "normalizeScale": 100,
+    "voxelArrayShift": 300,
     "geometryTolerance": 1e-4,
     "force2D": False,
-    "imageTypes": ["Original", "LoG"],
+    "imageTypes": IMAGE_TYPES,
+    "sigma": LOG_SIGMAS,          # LoG scales, in mm
     "featureClass": ["firstorder", "shape", "glcm", "glrlm", "glszm",
                      "gldm", "ngtdm"],
 }
-LOG_SIGMAS = [2.0, 3.0, 4.0, 5.0]
-WAVELET_BANDS = ["LLL", "LLH", "LHL", "LHH", "HLL", "HLH", "HHL", "HHH"]
+
+
+def _image_prefixes(image_types=None, bands=None, sigmas=None) -> list:
+    """``(prefix, classes)`` pairs implied by the imageType / wavelet / sigma settings."""
+    image_types = IMAGE_TYPES if image_types is None else image_types
+    bands = WAVELET_BANDS if bands is None else bands
+    sigmas = LOG_SIGMAS if sigmas is None else sigmas
+    out = []
+    for it in image_types:
+        if it == "Original":
+            out.append(("original", NON_SHAPE_CLASSES + ("shape",)))
+        elif it == "Wavelet":
+            out.extend((f"wavelet_{b}", NON_SHAPE_CLASSES) for b in bands)
+        elif it == "LoG":
+            for s in sigmas:
+                out.append((f"log_sigma_{str(s).replace('.', '_')}_mm_3D",
+                            NON_SHAPE_CLASSES))
+        else:
+            raise ValueError(f"unsupported image type: {it!r}")
+    return out
+
+
+def enumerate_feature_names(image_types=None, bands=None, sigmas=None) -> list:
+    """Every raw feature name the current imageType / wavelet / sigma settings produce."""
+    names = []
+    for prefix, classes in _image_prefixes(image_types, bands, sigmas):
+        for cls in classes:
+            names.extend(f"{prefix}_{cls}_{f}" for f in FEATURE_NAMES[cls])
+    return names
+
+
+def check_model_coverage(model_features, image_types=None, bands=None,
+                         sigmas=None) -> tuple:
+    """Split model feature names (``_h<N>`` stripped) into ``(covered, missing)``."""
+    have = set(enumerate_feature_names(image_types, bands, sigmas))
+    want = [re.sub(r"_h[1-5]$", "", str(x).strip()) for x in model_features]
+    covered = [w for w in want if w in have]
+    missing = [w for w in want if w not in have]
+    return covered, missing
 
 
 # ---------------------------------------------------------------------------
@@ -139,6 +250,11 @@ def main() -> int:
     ap.add_argument("--profiles", action="store_true", help="recompute Table S2")
     ap.add_argument("--candidates", action="store_true", help="build the candidate matrix")
     ap.add_argument("--extract", action="store_true", help="run PyRadiomics (needs images)")
+    ap.add_argument("--list-features", action="store_true",
+                    help="enumerate the feature names implied by the imageType settings")
+    ap.add_argument("--model-features", default=None,
+                    help="CSV of the model's feature names; check that this "
+                         "configuration produces all of them")
     ap.add_argument("--masks", default=None)
     ap.add_argument("--images", default=None)
     ap.add_argument("--out", default=None)
@@ -148,6 +264,28 @@ def main() -> int:
     P = paths(cfg)
     banner("03 · habitat radiomics feature extraction")
     log(f"  PyRadiomics settings: {PYRADIOMICS_SETTINGS}")
+
+    if args.list_features or args.model_features:
+        names = enumerate_feature_names()
+        log(f"\n  imageTypes    : {', '.join(IMAGE_TYPES)}")
+        log(f"  wavelet bands : {', '.join(WAVELET_BANDS)}")
+        log(f"  LoG sigmas    : {', '.join(f'{s:g}' for s in LOG_SIGMAS)}")
+        log(f"  enumerated    : {len(names)} feature names "
+            f"(expected {CANDIDATE_FEATURES})")
+        ok = len(names) == CANDIDATE_FEATURES
+        if not ok:
+            log(f"  !! this configuration produces {len(names)} names, "
+                f"the delivered tables have {CANDIDATE_FEATURES}")
+        if args.model_features:
+            mf = pd.read_csv(args.model_features, encoding="utf-8-sig")
+            col = "feature_name" if "feature_name" in mf.columns else mf.columns[0]
+            covered, missing = check_model_coverage(mf[col])
+            log(f"  model features: {len(covered)}/{len(covered) + len(missing)} covered")
+            for m in missing:
+                log(f"    !! not produced by this configuration: {m}")
+            ok = ok and not missing
+        log(f"  -> {'OK' if ok else 'FAIL'}")
+        return 0 if ok else 1
 
     if args.extract:
         if not (args.masks and args.images and args.out):

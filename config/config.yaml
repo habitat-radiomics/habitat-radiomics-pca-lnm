@@ -21,31 +21,32 @@ results_dir: results
 # ---------------------------------------------------------------------------
 archives:
   # deployment root: figures_submission/, SHAP_output/, scripts/
-  deploy_root: "C:/Users/l/Desktop/lunwen3"
+  deploy_root: "${HRPCA_DEPLOY_ROOT}"
   # code repository shipped with the submission (derived_data/)
-  legacy_code_repo: "C:/Users/l/Desktop/lunwen3/code_repository"
+  legacy_code_repo: "${HRPCA_DEPLOY_ROOT}/code_repository"
   # deployment habitat-feature tables (K = 5)
-  sol21_k5: "C:/Users/l/Desktop/lunwen3/sol21. 生境分析-(多)单中心-不同区域对比-临床"
+  sol21_k5: "${HRPCA_SOL21_K5}"
   # K = 4 and K = 7 replication runs
-  sol21_k4: "C:/O/K4/sol21. 生境分析-(多)单中心-不同区域对比-临床"
-  sol21_k7: "C:/O/K7/sol21. 生境分析-(多)单中心-不同区域对比-临床"
+  sol21_k4: "${HRPCA_SOL21_K4}"
+  sol21_k7: "${HRPCA_SOL21_K7}"
   # clinical Table 1 / Table S15 sources (AUTHORITATIVE — never the DL clinical.csv)
-  # ★ Table S15 (n = 377, PI-RADS OR 1.611) is reproduced ONLY by C:/O/Clinic.csv.
+  # ★ Table S15 (n = 377, PI-RADS OR 1.611) is reproduced ONLY by the
+  #   authoritative Clinic.csv named by HRPCA_CLINIC_CSV.
   #   The workspace copy lunwen3/Clinic.csv is a LATER 1097-row build whose
   #   training cohort has 374 complete cases and gives PI-RADS 1.565 — using it
   #   produces three spurious "discrepancies" in Table S15.
-  clinic_csv: "C:/O/Clinic.csv"
+  clinic_csv: "${HRPCA_CLINIC_CSV}"
   # fallback / cross-check only (1097 rows, 2026-09-03)
-  clinic_csv_workspace: "C:/Users/l/Desktop/lunwen3/Clinic.csv"
-  label_csv: "C:/Users/l/Desktop/lunwen3/label.csv"
+  clinic_csv_workspace: "${HRPCA_DEPLOY_ROOT}/Clinic.csv"
+  label_csv: "${HRPCA_DEPLOY_ROOT}/label.csv"
   # K selection (Table S3): 100-fold results and summary
-  k_cv10x10_summary: "C:/Users/l/Desktop/lunwen3/results/K_CV10x10_summary.csv"
+  k_cv10x10_summary: "${HRPCA_DEPLOY_ROOT}/results/K_CV10x10_summary.csv"
   # ★ the ONLY table that links the score files to patient identifiers
-  cases_with_ids: "C:/Users/l/Desktop/lunwen3/scripts/_cases_with_ids.csv"
+  cases_with_ids: "${HRPCA_DEPLOY_ROOT}/scripts/_cases_with_ids.csv"
   # deployed scores carrying identifiers and 16-digit precision
-  fullprec_scores: "C:/Users/l/Desktop/lunwen3/scripts/_fullprec_scores.csv"
+  fullprec_scores: "${HRPCA_DEPLOY_ROOT}/scripts/_fullprec_scores.csv"
   # scanner census / DICOM acquisition parameters
-  scanner_json_dir: "C:/Users/l/Desktop/lunwen3/scripts"
+  scanner_json_dir: "${HRPCA_DEPLOY_ROOT}/scripts"
 
 # ---------------------------------------------------------------------------
 # Cohort definition (frozen; do not change)
@@ -58,11 +59,38 @@ cohorts:
 external_cohorts: [test1, test2, test_prospective]   # pooled external n = 618
 
 # ---------------------------------------------------------------------------
+# Feature extraction (PyRadiomics 3.0.1) — reconstructed from the delivered
+# 1,197-column per-habitat tables and confirmed to produce 25/25 of the model's
+# feature names (TableS25_model_features_25.csv):
+#     Original            105 = 91 non-shape + 14 shape
+#     Wavelet   8 x 91 =  728
+#     LoG       4 x 91 =  364
+#     ---------------------------
+#     total               1,197
+# Verify with:  python src/03_feature_extraction.py --list-features \
+#                   --model-features <TableS25_model_features_25.csv>
+# ---------------------------------------------------------------------------
+extraction:
+  bin_width: 5
+  resampled_pixel_spacing: [2, 2, 2]
+  interpolator: sitkBSpline
+  normalize: true
+  normalize_scale: 100
+  voxel_array_shift: 300
+  geometry_tolerance: 1.0e-4
+  force_2d: false
+  image_types: [Original, Wavelet, LoG]
+  wavelet_bands: [LLL, LLH, LHL, LHH, HLL, HLH, HHL, HHH]
+  log_sigmas: [2.0, 3.0, 4.0, 5.0]          # all four LoG scales are used
+  feature_classes: [firstorder, shape, glcm, glrlm, glszm, gldm, ngtdm]
+  n_candidates_per_habitat: 1197
+
+# ---------------------------------------------------------------------------
 # Signatures and the classifier that was deployed for each (Table S8)
 # ---------------------------------------------------------------------------
 signatures:
   Clinic:            {classifier: LR,  column: Clinic}
-  Habitat:           {classifier: LR,  column: Habitat}     # 27-feature all-habitat model
+  Habitat:           {classifier: LR,  column: Habitat}     # 25-feature all-habitat model
   HabitatH1:         {classifier: MLP, column: HabitatH1}
   HabitatH2:         {classifier: LR,  column: HabitatH2}
   HabitatH3:         {classifier: MLP, column: HabitatH3}

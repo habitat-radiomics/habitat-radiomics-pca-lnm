@@ -1,9 +1,9 @@
-> # ⛔ RETRACTED — DO NOT USE
+﻿> # ⛔ RETRACTED — DO NOT USE
 >
 > **This document is superseded.**  Its three Table S15 "改稿建议" (n 377 → 374;
 > PI-RADS OR 1.611 → 1.565; PSA density OR 1.118 → 1.123) were all **wrong**:
 > they came from the 1,097-row `lunwen3/Clinic.csv`.  With the authoritative
-> `C:/O/Clinic.csv`, **Table S15 reproduces 14/14 cells with n = 377 and
+> `<archive>/Clinic.csv`, **Table S15 reproduces 14/14 cells with n = 377 and
 > PI-RADS OR 1.611** — nothing needs changing.
 >
 > ► The current, correct conclusions are in
@@ -16,7 +16,7 @@
 
 **日期**：2026-10-16 20:0x
 **提交人**：代码库重写会话
-**铁律**：`C:\O\投稿（压缩）` **全程只读**，未修改任何文件
+**铁律**：`<submission-package>` **全程只读**，未修改任何文件
 
 ---
 
@@ -26,9 +26,9 @@
 
 | 文件 | 角色 | `Table 4` 是否存在 | 最后修改 |
 |---|---|---|---|
-| `C:\O\投稿（压缩）\05_源文件\Manuscript_FINAL.md` | ✅ **权威正文** | ❌ **不存在**（只有 Table 1/2/3） | 2026-10-16 19:38 |
-| `C:\O\投稿（压缩）\02_补充材料\Supplementary_Material.md` | ✅ **权威补充** | ❌（只有 S1–S21） | 2026-10-16 19:56 |
-| `C:\Users\l\Desktop\lunwen3\投稿版_Manuscript_FINAL_EN.md` | ❌ **工作区旧稿（我误用）** | ✅ 存在（第 238–246 行） | **2026-10-09** |
+| `<submission-package>\05_源文件\Manuscript_FINAL.md` | ✅ **权威正文** | ❌ **不存在**（只有 Table 1/2/3） | 2026-10-16 19:38 |
+| `<submission-package>\02_补充材料\Supplementary_Material.md` | ✅ **权威补充** | ❌（只有 S1–S21） | 2026-10-16 19:56 |
+| `<deploy-root>\投稿版_Manuscript_FINAL_EN.md` | ❌ **工作区旧稿（我误用）** | ✅ 存在（第 238–246 行） | **2026-10-09** |
 
 我引用的 `.336` 出自 **`lunwen3\投稿版_Manuscript_FINAL_EN.md` 第 244 行**
 （该旧稿的"Table 4" Test 2 行）。已确认：**权威稿中不存在 Table 4**，
@@ -77,7 +77,7 @@
 |---|---|
 | **论文位置** | 补充材料 `## **Table S9. Calibration details by cohort**` |
 | **论文表注（原文）** | *"Values for the **clinical and combined models** were computed on the **saved scores of the deployed models** (the same models reported in Table 2); values for the **habitat signatures** are from the **analysis pipeline**."* |
-| **依据文件（复算）** | a) `data/scores/<cohort>.csv`（部署分数）<br>b) `C:\Users\l\Desktop\lunwen3\code_repository\derived_data\hosmer_all.csv`（归档流水线导出） |
+| **依据文件（复算）** | a) `data/scores/<cohort>.csv`（部署分数）<br>b) `<deploy-root>/code_repository/derived_data\hosmer_all.csv`（归档流水线导出） |
 | **ID 连接方式** | 同表内逐患者计算，**不需要任何连接**（H-L 只用本队列的 label + 本列分数） |
 | **复算脚本** | `python verify/check_disputed_items.py`（② 段），或用 `src/07_calibration.py` |
 
@@ -253,7 +253,7 @@
 ## ⑥ 复核入口（可独立复算）
 
 ```powershell
-cd C:\Users\l\Desktop\lunwen3\habitat-radiomics-pca-lnm
+cd <deploy-root>\habitat-radiomics-pca-lnm
 
 # ① 从权威稿解析全部论文值（自检）
 python -X utf8 src/hrpca/paper.py

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Prove the cross-table identifier key, and quantify each candidate.
 
@@ -31,6 +31,8 @@ is the missing link.  Four independent checks are run:
 """
 from __future__ import annotations
 
+import os
+
 import sys
 from pathlib import Path
 
@@ -42,7 +44,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from hrpca.linkage import COHORT_NAMES, load_cases_with_ids   # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
-ARCH = Path(r"C:\Users\l\Desktop\lunwen3")
+ARCH = Path(os.environ.get("HRPCA_ARCHIVE_ROOT", ""))
 DERIVED = ARCH / "code_repository" / "derived_data"
 HEATMAP = ARCH / "SHAP_output" / "heatmap"
 COH = ["train", "test1", "test2", "test_prospective"]

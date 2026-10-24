@@ -1,12 +1,12 @@
-"""建立 ID → 研究专用编号 的映射表（**不得进入仓库**）。
+﻿"""建立 ID → 研究专用编号 的映射表（**不得进入仓库**）。
 
 规则
 ----
 * 覆盖来源文件里出现的**全部**唯一 ID（研究队列 1016 + 筛选集其余 109 = 1125）
 * 按**数值升序**排序后依次编号 `S0001`…`S1125`
   （确定性：任何人用同样的来源文件都能重建同一张表，便于复核）
-* 输出到 `C:\\Users\\l\\Desktop\\lunwen3\\00_备份_ID映射_禁传\\`
-  —— **仓库外**，且目录名与 README 都明确标注禁传
+* 输出到环境变量 ``HRPCA_ID_MAP_DIR`` 指定的目录 —— **仓库外**，
+  且目录名与 README 都明确标注为受控材料
 
 用法
 ----
@@ -14,6 +14,8 @@
     python tools/build_id_map.py --verify   # 只校验，不写
 """
 from __future__ import annotations
+
+import os
 
 import argparse
 import csv
@@ -24,13 +26,13 @@ from datetime import datetime
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
-OUTDIR = Path(r"C:\Users\l\Desktop\lunwen3\00_备份_ID映射_禁传")
-MAP_CSV = OUTDIR / "ID_MAP_禁传.csv"
-MAP_JSON = OUTDIR / "id_map_禁传.json"
+OUTDIR = Path(os.environ.get("HRPCA_ID_MAP_DIR", ""))
+MAP_CSV = OUTDIR / "ID_MAP.csv"
+MAP_JSON = OUTDIR / "id_map.json"
 
 # 来源：这些文件里的 ID 列构成 ID 全域
 SOURCES = [
-    (r"C:\O\Clinic.csv", "ID"),
+    (os.environ.get("HRPCA_CLINIC_CSV", ""), "ID"),
     (REPO / "data" / "labels.csv", "ID"),
 ]
 ID_RE = r"^\d{7,10}$"
@@ -89,7 +91,7 @@ def main() -> int:
     OUTDIR.mkdir(parents=True, exist_ok=True)
     with io.open(MAP_CSV, "w", encoding="utf-8-sig", newline="") as fh:
         w = csv.writer(fh)
-        w.writerow(["# 禁传 —— 原始 ID ↔ 研究编号 映射表"])
+        w.writerow(["# 受控 —— 原始 ID ↔ 研究编号 映射表"])
         w.writerow(["# 本文件不得进入公开仓库；不得随稿件、补充材料或代码包提交"])
         w.writerow(["original_id", "study_id"])
         for k, v in m.items():
@@ -103,13 +105,13 @@ def main() -> int:
         "map": m,
     }, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    (OUTDIR / "!!_禁传_README.md").write_text(
+    (OUTDIR / "!!_CONTROLLED_README.md").write_text(
         "# ⛔ 禁止上传 / 禁止提交\n\n"
         "本目录含 **院内住院号 ↔ 研究专用编号 的映射表**。\n\n"
         "| 文件 | 用途 |\n|---|---|\n"
-        "| `ID_MAP_禁传.csv` | 人工核对用 |\n"
-        "| `id_map_禁传.json` | 程序用（含 sha256 指纹） |\n\n"
-        "**本目录位于代码仓库之外**（`C:\\Users\\l\\Desktop\\lunwen3\\` 根，"
+        "| `ID_MAP.csv` | 人工核对用 |\n"
+        "| `id_map.json` | 程序用（含 sha256 指纹） |\n\n"
+        "**本目录位于代码仓库之外**（`<project parent directory>/` 根，"
         "不在 `habitat-radiomics-pca-lnm\\` 内），因此不会被 `git add`。\n\n"
         "请勿复制到仓库、补充材料或任何公开位置。\n"
         "若需共享数据，只共享已替换为 `S####` 的版本。\n",

@@ -1,4 +1,4 @@
-"""The gold-standard table: every number the code must reproduce.
+﻿"""The gold-standard table: every number the code must reproduce.
 
 Each entry is ``{value, source, convention}`` where
 
@@ -180,11 +180,11 @@ KNOWN_SECTION_DISCREPANCIES = {
     # reading the WRONG clinical table:
     #
     #   * Table S15 (n = 377, PI-RADS OR 1.611, PSA density 1.118) is reproduced
-    #     exactly — 14/14 cells — by C:/O/Clinic.csv joined to label.csv.
+    #     exactly — 14/14 cells — by <archive>/Clinic.csv joined to label.csv.
     #     The workspace copy lunwen3/Clinic.csv is a later 1097-row build whose
     #     training cohort has 374 complete cases and returns PI-RADS 1.565.
     #   * Table 1 is reproduced exactly by the same authoritative build:
-    #     C:/O/Clinic.csv has exactly 7 training patients without ISUP grade
+    #     <archive>/Clinic.csv has exactly 7 training patients without ISUP grade
     #     group (matching the footnote) and gives 13/61/76/104/137 = 391.
     #     The heatmap export's ISUP column fills all 398 patients and gives 83
     #     for grade 3.
@@ -334,7 +334,7 @@ TABLE_S13 = {
 }
 
 # ---------------------------------------------------------------------------
-# Table S14 — 27 retained features (RF importance descending)
+# Table S14 — features ranked by random-forest importance (27 rows, descending)
 # ---------------------------------------------------------------------------
 TABLE_S14 = [
     ("log_sigma_4_0_mm_3D_glcm_InverseVariance_h4", 4, 0.0676, 0.0279),

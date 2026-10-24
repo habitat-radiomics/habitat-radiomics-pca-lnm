@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """把 ``data/`` 里所有住院号替换为研究专用编号 ``S####``（一次性维护脚本）。
 
@@ -8,6 +8,8 @@
 先备份到 ``backups/pseudonymise_<时间戳>/``，再原地改写；输出逐文件报告。
 """
 from __future__ import annotations
+
+import os
 
 import argparse
 import csv
@@ -21,7 +23,8 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 from hrpca import pseudonym as PS  # noqa: E402
 
-SOURCES = [(r"C:\O\Clinic.csv", "ID"), (REPO / "data" / "labels.csv", "ID")]
+SOURCES = [(os.environ.get("HRPCA_CLINIC_CSV", ""), "ID"),
+           (REPO / "data" / "labels.csv", "ID")]
 
 
 def main() -> int:

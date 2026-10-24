@@ -1,11 +1,11 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """在线数据（``15_在线数据/``）里外部化补充表的解析器。
 
 背景
 ----
 补充材料**有意瘦身**（33 → 18 页）：正文只印 4 张表（S3、S3b、S3d、S20），
-其余表格移到 ``C:\\O\\投稿（压缩）\\15_在线数据\\`` 的 CSV 供在线发布
+其余表格移到 ``<project>\\15_在线数据\\`` 的 CSV 供在线发布
 （期刊原文即鼓励把原始表格/电子表格在线发布）。因此核验必须**双源**：
 
     PDF 里仍印的表  → 照旧解析 ``Supplementary_Material.md``
@@ -20,16 +20,18 @@ CSV 的结构**不统一**，本模块按实际结构适配：
 4. **a/b 拆列**：部分面板的 ``a / b`` 已被拆成两列（如 S18 Panel B 的
    ``n (full)`` 与 ``n (reduced)``），调用方按列名取用
 
-只读，不修改 ``C:\\O``。
+只读，不修改项目根目录。
 """
 from __future__ import annotations
+
+import os
 
 import csv
 import io
 import re
 from pathlib import Path
 
-ONLINE_DIR = Path(r"C:\O\投稿（压缩）\15_在线数据")
+ONLINE_DIR = Path(os.environ.get("HRPCA_ONLINE_DIR", ""))
 
 #: table id -> file stem (the ids do not follow a single pattern)
 FILES = {
@@ -54,6 +56,9 @@ FILES = {
     "S20": "TableS20_dl_integrity_corrections",
     "S21": "TableS21_subgroup_analyses",
     "S22": "TableS22_Fig6_label_identity",
+    "S23": "TableS23_pairwise_MAE",
+    "S24": "TableS24_supplementary_models",
+    "S25": "TableS25_model_features",
     "T2": "Table2_features",
 }
 

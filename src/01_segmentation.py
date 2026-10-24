@@ -17,8 +17,8 @@ This module therefore does three things:
    (geometry, non-empty, binary) so that downstream steps start from a checked
    input.
 
-Segmentation quality in the study: Dice 0.95 against manual delineation in 30
-randomly selected cases (nnU-Net EMA pseudo-Dice at internal validation).
+Segmentation quality in the study: mean Dice 0.886 on 13 held-out cases
+(nnU-Net EMA pseudo-Dice at internal validation).
 
 Usage
 -----
@@ -53,8 +53,9 @@ NNUNET_CONFIG = {
     "label": {"0": "background", "1": "whole prostate gland"},
     "preprocessing": ["N4 bias-field correction", "resample to 1x1x1 mm^3",
                       "z-score intensity normalisation"],
-    "reported_quality": {"metric": "Dice", "value": 0.95, "n_cases": 30,
-                         "reference": "manual delineation"},
+    "reported_quality": {"metric": "Dice", "value": 0.886, "n_cases": 13,
+                         "reference": "held-out internal validation cases",
+                         "note": "nnU-Net EMA pseudo-Dice"},
 }
 
 

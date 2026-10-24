@@ -1,4 +1,4 @@
-# Deep-learning comparator — configuration and provenance
+﻿# Deep-learning comparator — configuration and provenance
 
 Everything on this page is **read from the authors' archive**; nothing here is a
 reconstruction.  No imaging data, model weights or patient-level files are
@@ -7,7 +7,7 @@ to rebuild the comparator.
 
 | Item | Value |
 |---|---|
-| Archived project | `C:\O\深度学习建模\sol12_DL_T2WI_18` (T2WI variant; sibling projects exist for ADC and DWI) |
+| Archived project | `<archive>/deep-learning\sol12_DL_T2WI_18` (T2WI variant; sibling projects exist for ADC and DWI) |
 | Authoring notebook | `Step1. 3D深度学习模型.ipynb`, cell 3 (`2026-10-06 09:47:42`) |
 | Training driver (alternative) | `run_cv10_train.py` (`2026-10-01 03:43:26`) — **not** what produced the archived model, see §5 |
 | Run configuration | `config.yaml` (`2026-10-06 10:50:42`) |
@@ -184,7 +184,7 @@ The comparator scores shipped in this repository
 (`data/dl_comparator_results.csv`, `data/dl_bootstrap_ci.csv`) are the frozen
 outputs.  Rebuilding them requires the **image data** (crop → resample to
 1 × 1 × 1 mm → z-score over non-zero voxels), the OneKeyAI environment
-(`D:\OnekeyPlatform\onekey_envs`, whose `run_classification3d.py` is
+(<OneKeyAI installation>/onekey_envs, whose `run_classification3d.py` is
 **Pyarmor-obfuscated** and cannot be read) and the trained weights — none of
 which are distributable.  What *is* verifiable offline is what this page
 records: the architecture, the input geometry, the optimisation settings and the

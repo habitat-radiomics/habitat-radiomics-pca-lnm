@@ -1,4 +1,4 @@
-"""habitat-radiomics-pca-lnm — shared helpers.
+﻿"""habitat-radiomics-pca-lnm — shared helpers.
 
 Everything the pipeline needs from the surrounding filesystem lives here, so
 that a single ``config/config.yaml`` controls every path.
@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -29,6 +30,25 @@ __all__ = [
 # __file__ = <repo>/src/hrpca/__init__.py  ->  parents[2] = <repo>
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
+_ENV_RE = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}([^\${]*)")
+
+
+def _expand_env(value):
+    """Expand ``${VAR}`` from the environment (unset -> empty string)."""
+    if isinstance(value, str):
+        def _repl(m):
+            v = os.environ.get(m.group(1), "")
+            tail = m.group(2)
+            if not v:
+                return tail.lstrip("/\\")
+            return v.rstrip("/\\") + tail
+        return _ENV_RE.sub(_repl, value)
+    if isinstance(value, dict):
+        return {k: _expand_env(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_expand_env(v) for v in value]
+    return value
+
 
 # --------------------------------------------------------------------------
 # configuration
@@ -39,6 +59,7 @@ def load_config(config: str | os.PathLike | None = None) -> dict:
         config = REPO_ROOT / "config" / "config.yaml"
     with open(config, "r", encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh)
+    cfg = _expand_env(cfg)
     cfg["_config_path"] = str(Path(config).resolve())
     cfg["_repo_root"] = str(REPO_ROOT)
     return cfg

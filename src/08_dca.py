@@ -42,13 +42,14 @@ def clinical_terms(d: pd.DataFrame, threshold: float) -> dict:
         pos = d[col].values >= threshold
         tp = int(((y == 1) & pos).sum())
         fp = int(((y == 0) & pos).sum())
+        tn = int(((y == 0) & ~pos).sum())          # pN0 below threshold
         out[tag] = dict(
             classified_high_risk=int(pos.sum()),
             eplnd=int(pos.sum()),
-            avoided_unnecessary=fp,
+            avoided_unnecessary=tn,                # truly avoided ePLND (was fp)
             missed=n1 - tp,
             sensitivity=tp / n1 if n1 else float("nan"),
-            specificity=fp / n0 if n0 else float("nan"),
+            specificity=tn / n0 if n0 else float("nan"),   # was fp / n0 (that is 1 - spec)
             net_benefit=M.net_benefit(y, d[col].values, threshold),
         )
     out["n"] = n
@@ -94,10 +95,10 @@ def table_s17bc(pooled, thresholds) -> tuple:
         for tag, p in (("combined", pr), ("clinical", prc)):
             pos = p >= t
             tp = int(((y == 1) & pos).sum())
-            fp = int(((y == 0) & pos).sum())
+            tn = int(((y == 0) & ~pos).sum())      # pN0 below threshold
             rows_imp.append(dict(scale="recalibrated", threshold=t, model=tag,
                                  classified=int(pos.sum()), missed=int((y == 1).sum()) - tp,
-                                 avoided=fp))
+                                 avoided=tn))
     return pd.DataFrame(rows_nb), pd.DataFrame(rows_imp)
 
 

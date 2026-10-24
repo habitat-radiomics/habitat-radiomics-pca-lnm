@@ -24,7 +24,7 @@ D  cross-table    quantities stated in more than one table agree (pooled n,
                   pooled AUCs) — catches drift between tables generated
                   separately
 
-Read-only: the submission package (``C:\\O\\投稿（压缩）``) is opened for reading;
+Read-only: the submission package (``<project>``) is opened for reading;
 nothing is copied into the repository.
 
 Exit codes

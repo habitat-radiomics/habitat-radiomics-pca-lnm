@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """输出脱敏：把核验产物里出现的已知标识符替换为研究编号。
 
@@ -9,12 +9,14 @@
 """
 from __future__ import annotations
 
+import os
+
 import io
 import json
 import re
 from pathlib import Path
 
-MAP_JSON = Path(r"C:\Users\l\Desktop\lunwen3\00_备份_ID映射_禁传\id_map_禁传.json")
+MAP_JSON = Path(os.environ.get("HRPCA_ID_MAP", ""))
 
 #: any 7–10 digit run that is a known identifier
 _PAT = re.compile(r"\b\d{7,10}\b")
