@@ -1,0 +1,39 @@
+﻿"Panel A: Availability of scanner metadata, by institution"
+Institution,Cohort n,Metadata recorded (n),Not available (n),Note
+I,488,353,135,training 398 + prospective 90
+II,339,339,0,source census lists 357 examinations for 339 patients; the excess is consistent with repeat examinations
+III,189,178,11,
+Total,1016,870,146,
+
+Panel B: Scanner models among recorded examinations (only patients with available metadata)
+Institution,Scanner model,Vendor,Field strength (T),"Examinations, n"
+I,Signa HDxt,GE,3.0,191
+I,Ingenia CX,Philips,3.0,65
+I,MAGNETOM Vida,Siemens,3.0,25
+I,Prisma,Siemens,3.0,24
+I,SIGNA Premier,GE,3.0,20
+I,Discovery MR750w,GE,3.0,12
+I,Ingenia,Philips,3.0,11
+I,SIGNA Architect AIR,GE,3.0,3
+I,other models,"GE, Siemens",3.0,2
+II,uMR 770,United Imaging,3.0,163
+II,Ingenia,Philips,3.0,61
+II,uPMR 790,United Imaging,3.0,59
+II,uMR 790,United Imaging,3.0,30
+II,Ingenia CX,Philips,3.0,28
+II,SIGNA Premier,GE,3.0,7
+II,Skyra,Siemens,3.0,7
+II,Ingenia Elition X,Philips,3.0,2
+III,Optima MR360,GE,1.5,44
+III,Prisma,Siemens,3.0,30
+III,Ingenia,Philips,3.0,31
+III,Skyra,Siemens,3.0,25
+III,Signa HDxt,GE,3.0,16
+III,Ingenia CX,Philips,3.0,14
+III,Achieva,Philips,3.0,11
+III,uMR 780,United Imaging,3.0,6
+III,uMR 560,United Imaging,1.5,1
+Total,,,,888
+
+"Notes: Scanner model and magnetic field strength were not available for all patients: several centers removed DICOM metadata during de-identification, and some provided only NIfTI files, whose headers do not carry these fields. Counts refer to patients with available metadata. Panel B counts examinations rather than patients; for institution II the source census lists 357 examinations for 339 patients, an excess consistent with repeat examinations (all 339 patients had metadata recorded)."
+"Note: Panel B lists 18 distinct model names (17 named plus an 'other models' bucket) across 26 institution-model entries. The per-institution totals in Table S1a (11, 8 and 10 scanner models; 29 in total) count each model once per institution and additionally include models that could not be individually named after DICOM de-identification."

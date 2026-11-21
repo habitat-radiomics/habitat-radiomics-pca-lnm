@@ -1,0 +1,30 @@
+﻿"Panel A: Corrected cases and habitat-feature exclusions, by cohort"
+Cohort,Corrected_during_review,No_habitat_features,Cohort_n_analyzed
+Training,17,8,398
+Test 1,14,3,339
+Test 2,12,3,189
+Prospective,9,2,90
+Total,52,16,1016
+
+Panel B: Discrimination after excluding the corrected cases (model frozen)
+Cohort,n (full),n (reduced),pN1 (full),pN1 (reduced),Combined AUC (full → reduced),Clinical AUC (full → reduced)
+Training,398,382,118,114,0.798 → 0.798,0.706 → 0.704
+Test 1,339,325,45,44,0.842 → 0.846,0.795 → 0.808
+Test 2,189,178,18,18,0.829 → 0.832,0.770 → 0.765
+Prospective,90,81,19,19,0.887 → 0.891,0.689 → 0.708
+Pooled validation,618,584,82,81,0.844 → 0.849,0.778 → 0.789
+
+Panel C: Incremental value (pooled validation cohorts)
+Analysis,ΔAUC,95% CI,P
+Full cohort (n = 618),+0.066,+0.010 to +0.127,.022
+Excluding corrected cases (n = 584),+0.060,+0.007 to +0.115,.032
+
+Panel D: Coefficients before and after refitting
+Parameter,Final model,Refitted after exclusion
+Clinical probability,4.063,4.059
+H2 habitat probability,2.593,2.945
+H4 habitat probability,3.934,3.821
+Intercept,-4.249,-4.315
+Pooled validation AUC (n = 584),0.849,0.848
+
+"Note: The 'Corrected during review' and 'No habitat features' columns describe different populations and are not additive; their intersection is 1 patient (Test cohort 2). One further case listed among the corrected entries had no available imaging and was excluded before analysis; after both exclusions, 50 corrected patients are within the analyzed cohort (Training 16, Test 1 14, Test 2 11, Prospective 9)."

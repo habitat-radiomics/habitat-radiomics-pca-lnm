@@ -1,0 +1,15 @@
+﻿Parameter,Institution I,Institution II,Institution III
+Cohort(s) contributed,Training (n = 398) + prospective (n = 90),Test 1 (n = 339),Test 2 (n = 189)
+"Scanner models, n",11,8,10
+Vendors,"GE, Philips, Siemens","United Imaging, Philips, GE, Siemens","GE, Siemens, Philips, United Imaging"
+Field strength,"3.0 T (all recorded examinations; 353 of 488 patients recorded, 135 not available)","3.0 T (all recorded examinations; 339 of 339 patients recorded, 0 not available)","1.5 T (n = 45) and 3.0 T (n = 133); 178 of 189 patients recorded, 11 not available"
+Coil,Pelvic phased-array (body/torso arrays),Pelvic phased-array,Pelvic phased-array (Sense-cardiac / multi-coil)
+Endorectal coil,Not used,Not used,Not used
+T2WI sequence / slice thickness,"FSE-TSE, axial, 3–4 mm","FSE, axial, 3 mm","TSE, axial, 3–4 mm"
+T2WI TR / TE (ms),2992–6118 / 105–166,3199–7146 / 100–143,2246–7770 / 68–149
+DWI sequence / slice thickness,"SS-EPI, axial, 3–4 mm","SS-EPI, axial, 3 mm","SS-EPI, axial, 3–4 mm"
+DWI b-value used (s/mm²),1000,1000,1000
+ADC calculation,Mono-exponential,Mono-exponential,Mono-exponential
+Sequences analyzed,"T2WI, DWI, ADC; DCE not used","T2WI, DWI, ADC; DCE not used","T2WI, DWI, ADC; DCE not used"
+"Metadata availability, n",recorded 353 / not available 135,recorded 339 / not available 0,recorded 178 / not available 11
+Note,"Scanner model and magnetic field strength were not available for all patients: several centers removed DICOM metadata during de-identification, and some provided only NIfTI files, whose headers do not carry these fields. Counts refer to patients with available metadata.",,

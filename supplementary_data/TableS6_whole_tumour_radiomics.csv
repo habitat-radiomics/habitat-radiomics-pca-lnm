@@ -1,0 +1,15 @@
+﻿Model,Training (n = 398),Test 1 (n = 339),Test 2 (n = 189),Prospective (n = 90)
+WTR T2WI only (LR),0.705,0.690,0.511,0.748
+WTR DWI only (LR),0.759,0.635,0.543,0.697
+WTR ADC only (LR),0.763,0.616,0.695,0.692
+"WTR 3-modal (T2WI+DWI+ADC), LR",0.790,0.736,0.774,0.734
+"Clinical (ISUP + PI-RADS), LR",0.706,0.795,0.770,0.689
+"Combined habitat model (clinical + H2 + H4, LR)",0.798,0.842,0.829,0.887
+Comparison,AUC (WTR-based),AUC (habitat-based),ΔAUC,DeLong P
+"WTR 3-modal + ISUP vs Combined (ISUP + PI-RADS + H2 + H4, refitted)",0.779,0.833,-0.054,.001
+WTR 3-modal (no clinical) vs Combined (deployed model),0.755,0.844,-0.089,<.001
+WTR 3-modal + ISUP vs H4 + ISUP,0.779,0.815,-0.036,.065
+"Clinical (ISUP + PI-RADS) [two-variable clinical model] vs WTR, 3-modal + ISUP [whole-tumor radiomics + ISUP]; two distinct models with the same pooled AUC",0.779,0.779,0.000,.990
+WTR 3-modal vs WTR T2WI only,0.755,0.663,+0.092,.008
+"WTR 3-modal vs H4",0.755,0.729,+0.026,.53
+"WTR 3-modal + clinical probability vs Combined (deployed model)",0.757,0.844,-0.087 (-0.139 to -0.037),.0004

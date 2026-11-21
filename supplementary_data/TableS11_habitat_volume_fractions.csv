@@ -1,0 +1,8 @@
+﻿"Panel A: Habitat volume fractions (training cohort, n = 398)"
+Habitat,pN0 mean (%),pN1 mean (%),Difference (percentage points),Mann–Whitney P
+H1,25.94,23.77,-2.17,.156
+H2,22.66,22.11,-0.55,.999
+H3,17.77,18.94,+1.17,.606
+H4,16.45,16.75,+0.31,.872
+H5,17.19,18.43,+1.24,.425
+Total habitat volume (mm³),"20,854","20,239",-615,.683

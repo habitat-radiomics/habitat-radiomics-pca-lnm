@@ -1,0 +1,13 @@
+﻿Panel A: Pipeline steps
+Step,Detail
+Gland segmentation,3D nnU-Net on T2WI; mean Dice 0.886 on 13 held-out internal validation cases
+Level-1 clustering,"Voxel-wise K-means on ADC, DWI and T2WI (each z-scored per patient); K = 2 by Calinski–Harabasz index"
+Target region definition,Cluster with the lowest ADC values (operational definition; no manual contouring)
+Level-2 clustering,Voxel-wise K-means on local radiomics features within the level-1 ROI; K = 5 selected by 10×10-fold repeated cross-validation (Table S3)
+Feature extraction,"PyRadiomics 3.0.1; normalize = true; normalizeScale = 100; binWidth = 5; voxelArrayShift = 300; resampledPixelSpacing = 2 × 2 × 2 mm³; interpolator = sitkBSpline; Original + LoG (sigma = 2, 3, 4, 5 mm) + Wavelet (8 sub-bands) -> 1,197 features per habitat"
+Candidate features,"1,197 after region-remapping aggregation across the five habitats"
+Selection,near-zero variance removal → collinearity (features with |r| > 0.90 removed) → LASSO (λ = 0.0233); 25 features retained
+Classifiers,"11 algorithms per signature (logistic regression, support vector machine, K-nearest neighbors, random forest, extra trees, XGBoost, LightGBM, multilayer perceptron, AdaBoost, gradient boosting, naive Bayes); the best by training-cohort cross-validation was selected for each signature (Clinic/H2/H4: LR; all-habitat: LR; H1/H3/H5: MLP)"
+Combined model,"Logistic regression on the clinical probability (ISUP grade group + PI-RADS) + habitat probabilities H2 and H4 (coefficients 4.06, 2.59 and 3.93; intercept -4.25)"
+Risk stratification,"Predicted probability <10%, 10–20%, >20%"
+Software,"Python 3.9 (scikit-learn, statsmodels, PyRadiomics, SimpleITK); level-2 clustering and the deep-learning comparator were run within the OneKeyAI platform (version 6.5.10, onekey_algo, distributed as obfuscated bytecode)"

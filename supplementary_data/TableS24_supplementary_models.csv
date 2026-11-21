@@ -1,0 +1,19 @@
+﻿Supplementary models: representation richness on a matched clinical input
+model,n_variables,training,test1,test2,prospective,pooled_external,pooled_95CI,P_vs_combined,P_vs_clinical,P_vs_allhabitat,note
+Clinical + all-habitat features (LASSO-CV),29,0.788 (0.739-0.835),0.821 (0.753-0.880),0.797 (0.698-0.881),0.734 (0.597-0.855),0.802,0.753-0.847,"-0.042, P = .067","+0.024, P = .301","+0.211, P < .001",A1; additional clinical input
+Clinical + all-habitat features (23 PCs),25,0.790 (0.739-0.837),0.808 (0.741-0.870),0.749 (0.617-0.862),0.734 (0.600-0.855),0.783,0.732-0.835,"-0.061, P = .014","+0.004, P = .887","+0.191, P < .001",A2; additional clinical input
+Clinical + all-habitat features (13 univariate),15,0.780 (0.729-0.828),0.818 (0.749-0.876),0.784 (0.682-0.873),0.725 (0.585-0.852),0.796,0.745-0.842,"-0.048, P = .045","+0.018, P = .492","+0.205, P < .001",A3; additional clinical input
+H2 + H4 only (no clinical),2,0.770 (0.718-0.818),0.744 (0.664-0.818),0.698 (0.530-0.847),0.856 (0.762-0.940),0.750,0.691-0.806,"-0.094, P < .001","-0.029, P = .528","+0.159, P < .001","B; H2 and H4 only, without clinical input"
+"Clinical, four-variable (ISUP + PI-RADS + PSA + PSA density)",4,see TableS16,see TableS16,see TableS16,see TableS16,0.7925,0.7365-0.8451,"-0.052, P = .054",not reported,not reported,"Per-cohort AUC as in TableS16; delta vs combined +0.052 (P = .054, DeLong); IDI +0.087 and continuous NRI +0.366 (95% CI +0.143 to +0.589) (both significant); calibration slope 1.142, intercept -0.335, Brier 0.1037, Hosmer-Lemeshow P = .003; decision-curve analysis: combined higher at thresholds 10%-20%, four-variable model higher at 25%-30%"
+"Combined (clinical + H2 + H4), reference",3,0.798 (0.751-0.842),0.842 (0.794-0.885),0.829 (0.702-0.927),0.887 (0.791-0.962),0.844,0.803-0.883,reference,"+0.066, P = .022","+0.253, P < .001",Published deployed model (Table 2)
+"Clinical (ISUP grade group + PI-RADS), reference",2,0.706 (0.652-0.758),0.795 (0.707-0.868),0.770 (0.641-0.883),0.689 (0.549-0.816),0.779,0.715-0.836,"-0.066, P = .022",reference,"+0.187, P < .001",Published deployed model (Table 2)
+"All-habitat (25 features), reference",25,0.864 (0.826-0.899),0.591 (0.499-0.681),0.552 (0.392-0.709),0.655 (0.492-0.796),0.591,0.524-0.658,"-0.253, P < .001","-0.187, P < .001",reference,Published deployed model (Table 2)
+
+Notes:
+"1. pooled_external = direct concatenation of external test 1, external test 2 and the prospective cohort (n = 618). AUC 95% CI by bootstrap resampling (2,000 replicates, numpy default_rng seed 20261017); P values by the DeLong test on paired AUCs; delta = row model minus comparator."
+"2. The three reference rows are the published deployed models; the three cross-reference comparisons use the published DeLong P values (combined vs clinical, P = .022; comparisons against the all-habitat model, P < .001)."
+"3. Row B uses H2 and H4 only, without clinical input, as the radiomics-only reference for representation richness."
+4. Label provenance: every row is connected through the study S-code identifiers and uses the labels of the archival label file (model_inputs). The real_id training-cohort row-shift defect that affected earlier exploratory joins has been fixed (habitat-radiomics-pca-lnm/docs/REAL_ID_ROW_SHIFT.md); the values in this table do not reproduce that defect.
+5. A1 used 27 features selected de novo by LASSO-CV on clinical plus all-habitat features; this set differs from the 25 features of the deployed all-habitat model.
+
+"95% CIs from 2,000 bootstrap resamples (seed 20261017); Table 2 CIs use seed 20261016, so the two tables may differ by ≤0.02 in interval bounds. Point estimates are rounded to three decimals; the same model may therefore appear as 0.778 or 0.779 across tables."

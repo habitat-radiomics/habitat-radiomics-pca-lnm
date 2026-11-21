@@ -1,0 +1,15 @@
+﻿Panel A: Subgroup analyses of the combined model in the external and prospective cohorts (n = 618),,,,
+Subgroup,n,pN1,AUC,95% CI
+ISUP grade group ≤2,195,9,0.843,0.641–0.973
+ISUP grade group ≥3,423,73,0.811,0.751–0.853
+PSA ≤10 ng/mL,227,22,0.859,0.793–0.920
+PSA >10–20 ng/mL,173,11,0.935,0.881–0.977
+PSA >20 ng/mL,218,49,0.763,0.689–0.831
+1.5-T scanner,45,2,0.849,0.733–0.953
+3.0-T scanner,562,78,0.852,0.809–0.892
+
+"Panel B: Interaction tests (bootstrap comparison of subgroup AUCs, 2,000 resamples)",,,
+Comparison,n,P
+ISUP grade group ≤2 vs ≥3,618,.615
+PSA strata (≤10 / >10–20 / >20 ng/mL),618,.308
+Field strength 1.5 T vs 3.0 T,607,.980

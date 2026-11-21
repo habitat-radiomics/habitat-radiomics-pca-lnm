@@ -1,0 +1,18 @@
+﻿Panel A: External robustness of each signature
+Signature,Training,Test 1,Test 2,Prospective,External mean,External SD,Range
+H4,0.751,0.709,0.719,0.815,0.748,0.048,0.106
+H2,0.695,0.679,0.607,0.764,0.683,0.064,0.157
+H3,0.676,0.595,0.573,0.711,0.626,0.061,0.138
+H5,0.673,0.690,0.528,0.648,0.622,0.069,0.162
+H1,0.681,0.655,0.478,0.702,0.612,0.096,0.224
+All-habitat (25 features),0.864,0.591,0.552,0.655,0.599,0.042,0.103
+Combined (clinical + H2 + H4),0.798,0.842,0.829,0.887,0.853,0.025,0.058
+Clinical (ISUP + PI-RADS),0.706,0.795,0.770,0.689,0.751,0.045,0.106
+"Panel B: Pairwise comparison (pooled validation cohorts, n = 618)"
+Comparison,ΔAUC,DeLong P
+Combined vs H4,+0.115,<.001
+Combined vs H2,+0.168,<.001
+H4 vs H2,+0.053,.212
+Combined vs Clinical,+0.066,.022
+H4 vs Clinical,-0.049,.290
+"Note: 'External mean' in Panel A is the mean of the three cohort-specific AUCs (not a pooled estimate). Delta AUCs in Panel B are computed from the pooled patient-level predictions of the three cohorts (n = 618) and therefore do not equal differences of the Panel A mean column; for example, combined versus H4 is 0.844 - 0.729 = 0.115, whereas the mean-column difference is 0.853 - 0.748 = 0.105."

@@ -1,0 +1,33 @@
+﻿Panel A: Mean feature value by habitat (log-sigma 2.0 mm),,,,,
+"Feature (log-sigma 2.0 mm, normalized T2WI)",H1,H2,H3,H4,H5
+Signal mean (normalized T2WI),3.113,2.848,2.398,2.214,1.799
+Entropy (heterogeneity),3.459,3.478,3.533,3.523,3.527
+Uniformity,0.116,0.114,0.109,0.111,0.110
+GLCM contrast,10.065,10.944,12.812,13.306,13.420
+GLCM correlation,0.460,0.416,0.390,0.385,0.388
+GLCM inverse difference moment,0.403,0.389,0.375,0.370,0.372
+GLSZM small-area emphasis,0.715,0.737,0.768,0.771,0.764
+GLSZM zone entropy,5.005,4.869,4.718,4.686,4.731
+GLRLM short-run emphasis,0.948,0.953,0.963,0.963,0.963
+GLRLM long-run emphasis,1.270,1.246,1.191,1.186,1.187
+,,,,,
+Panel B: Standardized profile (z-score across habitats),,,,,
+Feature (z-score across habitats),H1,H2,H3,H4,H5
+Signal mean (normalized T2WI),+1.38,+0.81,-0.16,-0.56,-1.46
+Entropy (heterogeneity),-1.51,-0.87,+0.99,+0.64,+0.75
+Uniformity,+1.44,+0.90,-1.14,-0.38,-0.83
+GLCM contrast,-1.51,-0.86,+0.52,+0.88,+0.97
+GLCM correlation,+1.85,+0.28,-0.65,-0.80,-0.68
+GLCM inverse difference moment,+1.69,+0.59,-0.57,-0.90,-0.81
+GLSZM small-area emphasis,-1.66,-0.64,+0.79,+0.93,+0.58
+GLSZM zone entropy,+1.70,+0.56,-0.70,-0.97,-0.59
+GLRLM short-run emphasis,-1.57,-0.80,+0.74,+0.87,+0.77
+GLRLM long-run emphasis,+1.53,+0.86,-0.71,-0.85,-0.83
+,,,,,
+Panel C: Habitat profiles and biological interpretation,,,,,
+Habitat,Profile,Biological interpretation
+H1,"Highest signal, lowest entropy, highest uniformity, lowest contrast",Homogeneous high-signal region (low cellularity / stromal component)
+H2,"Higher signal, lower entropy and contrast",Transitional region (tumor margin / mixed composition)
+H3,"Higher entropy, lower uniformity, higher contrast, smaller texture regions",Heterogeneous high-contrast region (high cellular density)
+H4,"Lower signal, high contrast, small texture regions","Low-signal, high-contrast region (dense tumor / hypoxic compartment)"
+H5,"Lowest signal, high entropy, highest contrast","Lowest-signal, most heterogeneous region (tumor core / necrosis–fibrosis)"

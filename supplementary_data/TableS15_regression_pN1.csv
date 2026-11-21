@@ -1,0 +1,9 @@
+﻿Variable,Univariable OR (95% CI),P,Multivariable OR (95% CI),P
+Age (per year),1.003 (0.972–1.035),.843,1.001 (0.968–1.036),.939
+PI-RADS (per point),1.681 (1.134–2.493),.010,1.611 (1.048–2.477),.030
+PSA (per ng/mL),1.006 (1.002–1.009),<.001,1.004 (0.999–1.009),.082
+ISUP grade group,2.047 (1.609–2.603),<.001,1.891 (1.476–2.422),<.001
+Target-ROI volume (per mL),0.995 (0.978–1.013),.604,1.013 (0.976–1.051),.508
+Prostate volume (per mL),0.996 (0.986–1.006),.393,0.989 (0.967–1.011),.336
+PSA density (per ng/mL/cm³),1.118 (1.031–1.212),.007,1.019 (0.930–1.117),.681
+"Note: Training-cohort patients with complete data (n = 377); the multivariable model includes all seven variables simultaneously; ORs per unit as labelled."

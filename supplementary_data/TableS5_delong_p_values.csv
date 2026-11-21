@@ -1,0 +1,6 @@
+﻿Cohort,vs Clinical (ISUP + PI-RADS),vs Habitat H4,vs Habitat H2,vs All-habitat (25 features)
+Training,<.001,.012,<.001,.002
+Test 1,.255,<.001,<.001,<.001
+Test 2,.371,.003,.002,<.001
+Prospective,.003,.202,.066,.003
+Pooled validation,.022,<.001,<.001,<.001
