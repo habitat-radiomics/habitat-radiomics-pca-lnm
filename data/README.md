@@ -7,7 +7,7 @@
 
 The trial registration (ChiCTR2500111002) states *IPD sharing: No*.  Accordingly
 this directory contains **no per-patient record**.  It holds the aggregate
-results, the metadata, and a **fabricated** dataset that mirrors the real schema.
+results, the metadata, and a **synthetic** dataset that mirrors the real schema.
 
 ## What ships
 
@@ -28,7 +28,7 @@ results, the metadata, and a **fabricated** dataset that mirrors the real schema
 > `synthetic/` comes from a seeded random number generator
 > (`tools/make_synthetic_data.py`, seed 20260101).  The real tables were
 > consulted **only** to copy column names; no real cell value is present.
-> Numbers computed on these files are meaningless and will not match the paper.
+> These files are for pipeline demonstration only and do not reproduce the published values.
 
 ## What does **not** ship, and why
 

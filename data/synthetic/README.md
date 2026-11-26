@@ -11,8 +11,8 @@ The individual-level analysis dataset is not publicly available
 (ChiCTR2500111002: *IPD sharing: No*); see the top-level README.
 
 Purpose: let a reader run the code end-to-end and confirm that the
-pipeline executes.  **Numbers computed on these files are meaningless** —
-they will not, and must not, match the paper.
+pipeline executes.  **These files are for pipeline demonstration only** and do not
+reproduce the published values.
 
 | file | rows | mirrors |
 |---|---|---|

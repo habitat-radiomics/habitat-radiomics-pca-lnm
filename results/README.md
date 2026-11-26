@@ -34,7 +34,7 @@ python tools/make_synthetic_data.py
 python verify/check_paper_numbers.py --synthetic     # pipeline demonstration only
 ```
 
-The synthetic run proves the code executes; its numbers are fabricated and are
+The synthetic run proves the code executes; its numbers are synthetic and are
 **not** compared with the manuscript.
 
 > Earlier revisions of this repository shipped `results/` generated from the real

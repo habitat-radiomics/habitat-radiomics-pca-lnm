@@ -4,12 +4,12 @@ Reproduces the SHAP figures of the paper:
 
 * **Fig. 5** — per-model beeswarm and mean |SHAP| panels for the H2 (7 features)
   and H4 (18 features) habitat models → `h2_h4_shap.py`
-* **Fig. 6 / Fig. S10** — per-case three-level SHAP decomposition, force plots and
+* **Fig. S5** — per-case three-level SHAP decomposition, force plots and
   the five-case stack → `shap_FINAL_v3.py`, `draw_5cases_native.py`,
   `combo_shap_mri.py`, `stack_5cases.py`
 
 The SHAP values and force plots can be reproduced from the feature table and the
-published coefficients; the MRI panels in Fig. 6 require the source images,
+published coefficients; the MRI panels in Fig. S5 require the source images,
 which are not distributed.
 
 ## Install
@@ -93,11 +93,11 @@ standardised inputs, `Clinical: ISUP` and `Clinical: PI-RADS`:
 | `Clinical: ISUP` + `Clinical: PI-RADS` | **2** |
 | **total** | **27** |
 
-**This is the form assumed by the figure labels.** The key in Supplemental Note S1
+**This is the form assumed by the figure labels.** The key in the figure label key
 lists `ClinISUP` / `ClinPIRADS` as separate labels, and
-`TableS22_Fig6_label_identity.csv` describes its residual row as "pooled
+the label-identity table (not distributed) describes its residual row as "pooled
 contribution of the remaining **19** features" (8 shown + 19 = 27). The two
-scripts therefore disagree by one item, and the delivered Fig. 6 follows this one.
+scripts therefore disagree by one item, and the delivered Fig. S5 follows this one.
 It writes to its own directory, `$HRPCA_SHAP_OUT/h2h4_final_v2_clinic_split/`, so
 running it does not overwrite the v3 output (in the archive both scripts wrote to
 the same folder, so whichever ran last silently won).

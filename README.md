@@ -10,7 +10,7 @@ Analysis code and aggregate result tables for
 |---|---|
 | src/ | Analysis pipeline: segmentation, habitat clustering, feature selection, modelling, figures |
 | supplementary_data/ | 20 aggregate result tables (five are also supplied as Supplementary Data 01-05) |
-| results/ | Generated figures |
+| results/ | Generated outputs (not committed; see results/README.md) |
 | verify/ | Numeric verification scripts |
 | docs/ | Verification notes, provenance, configuration |
 
