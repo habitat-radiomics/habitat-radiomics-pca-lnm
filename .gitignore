@@ -8,8 +8,8 @@
 #   data/MANIFEST.json    metadata
 #   results/README.md     the directory is otherwise generated
 #
-# ★ What is NOT committed, and must never be:
-#   any individual-level (IPD) table — the trial registration states
+# IMPORTANT - what is NOT committed, and must never be:
+#   any individual-level (IPD) table - the trial registration states
 #   "IPD sharing: No".  The per-patient clinical, feature, score, identifier-key
 #   and SHAP tables live in a controlled institutional store outside git.
 #   Run outputs derived from them (results/tables, results/figures) likewise.
